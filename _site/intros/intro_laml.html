@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <title>SignalWire Guides</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="/assets/css/main.css">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="/">SignalWire Guides</a>
+      </div>
+    </nav>
+    <div class="container main-area">
+      <h1 id="introduction-to-laml">Introduction to LaML</h1>
+
+<p>LaML is the language used by SignalWire to determine how the phone numbers in your account react during calls or text messages. When a call or message comes into one of your SignalWire phone numbers, SignalWire makes an HTTP request to the URL endpoint you configured for that number. Your response to that request instructs SignalWire on what to do next.</p>
+
+<p>Responses to the HTTP request are in an XML format we call LaML. LaML allows you to specify instructions using simple LaML commands called verbs. SignalWire starts at the top of your LaML document and executes your LaML commands in order, from top to bottom.</p>
+
+<h2 id="how-laml-works">How LaML works</h2>
+
+<p>When n message or call is received by one of your SignalWire phone numbers, SignalWire lookup the URL endpoint you configured for that phone number and make an HTTP request to it. The URL endpoint then responds to the request with a LaML document that determines what to do next.</p>
+
+<p>SignalWire will read the instructions in the LaML document, from top to bottom, and execute the commands in order.</p>
+
+<p>You can generate and respond with raw XML yourself, or utilize one of the <a href="https://docs.signalwire.com/topics/laml-api/#laml-rest-api-client-libraries-and-sdks">SignalWire helper libraries</a> to help you generate it easily. To get started, we will be making use of SignalWire LaML Bins, our serverless hosted service that allows you to easily serve static documents without setting up any infrastructure.</p>
+
+<p>To find out how to set up your account and your first LaML bin, refer to <a href="/intros/signalwire_101">SignalWire 101</a></p>
+
+<p>Outbound calls and messages started via the <a href="https://docs.signalwire.com/topics/laml-api">LaML REST API</a>, whichwe will cover in a subsequent post, are controlled the same way. When you start an outbound call or message, you also pass a link to a LaML document. SignalWire will make a request to this document to determine how it should proceed with the call or message.</p>
+
+<p>While a single LaML document is executed at a time, many documents can be linked together and generated dynamically to create complex applications to fit any need.</p>
+
+<p>Documentation on LaML is available <a href="https://docs.signalwire.com/topics/laml-xml/#laml-xml-specification">on the SignalWire website</a>, and you will find more information there.</p>
+
+<p>Our goal for this article will to create simple practical interactions to showcase the LaML bulding blocks and features.</p>
+
+<h2 id="call-forwarding-and-mustache-templating">Call forwarding and Mustache templating</h2>
+
+<p>A common use case is to forward an incoming call to another phone number. For example, you might not want to give out your personal phone number, or you would like to be able to handle calls in different ways than just connecting them.</p>
+
+<p>The following LaML will result in all calls being forwarded to the specified number, which in the example is a Washington State weather service.</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/62a8ffe5ee07f50aa901c0cad6c778ad.js"> </script>
+
+<p>You will notice a specific tag being used in this document, `` as the value of the <code class="highlighter-rouge">callerId</code> property.</p>
+
+<p>That is a Mustache templating variable that is used to make your LaML Bin dynamic. Any variable that is part of the HTTP payload for the request, whether it is one of the<a href="https://docs.signalwire.com/laml-xml/#voice-laml-overview-request-parameters">standard parameters</a> or a query string variable you set (<code class="highlighter-rouge">https://yourspace.signalwire.com/laml-bins/your-laml-bin-id?YOURVARIABLE=123</code>) will be available for replacement.</p>
+
+<p>In this case, we are using the <code class="highlighter-rouge">From</code> value so that the caller ID for the forwarded call echoes the original calling number. In this way, your calls will have the correct caller identification.</p>
+
+<p>SignalWire allows you to set your caller ID to three types of numbers:</p>
+<ul>
+  <li>The caller ID the call is coming from, such as in this example</li>
+  <li>A number you own on your SignalWire account</li>
+  <li>A phone number you have verified with your SignalWire account</li>
+</ul>
+
+<p>This provides flexibility while protecting our users from fraud.</p>
+
+<h2 id="gathering-a-choice-and-playing-it-back">Gathering a choice and playing it back</h2>
+
+<p>Most non-trivial applications will require a web application to be serving your LaML documents, so you can perform actions when your callers send you input.</p>
+
+<p>For now, and to explore the concept of callbacks, we will be trying out a simple two-document flow where a caller will say something and we will play it back to them.</p>
+
+<p>We will work on the two required LaML bins in reverse order, so we have the URL to use as an action in the prompt bin.</p>
+
+<p>The first bin we need is a simple document that will play back what the user said, using the Mustache templating we encountered above.</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/b5f8d34adb8c465d9e98660411032f4c.js"> </script>
+
+<p>We use the <code class="highlighter-rouge">Say</code> verb to speak the <code class="highlighter-rouge">SpeechResult</code> variable back to the caller using text-to-speech. As with most other verbs, it supports many options, including the speech language. You can find out more about <code class="highlighter-rouge">Say</code> <a href="https://docs.signalwire.com/topics/laml-xml/#voice-laml-say">here</a>.</p>
+
+<p>Take note of the LaML bin URL in your dashboard, as you will need it in the next step. We will create a bin that will be used as the action URL for the phone number you have set up. When the user speaks, their speech will be recognized using Automated Speech Recognition (ASR) and stored in the <code class="highlighter-rouge">SpeechResult</code> variable to be posted back to the endpoint you specify in the <code class="highlighter-rouge">action</code> parameter.</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/7bd221b8c070c1c8b65fec5152e25e91.js"> </script>
+
+<p>Finally, set the action URL for your phone number as the latter bin we created, and try calling your number!</p>
+
+<h2 id="what-else-can-laml-do-for-you">What else can LaML do for you?</h2>
+
+<p>LaML provides verbs to create conferences, queues, record and play back audio, receive speech and DTMF (pressed digits) input, and many other features.</p>
+
+<p>It is very easy to create composable interfaces and enable complex call flows.</p>
+
+<p>Go register at <a href="https://signalwire.com">SignalWire</a> now and let us know about the exciting applications you will build!</p>
+
+    </div>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>
+  </body>
+</html>

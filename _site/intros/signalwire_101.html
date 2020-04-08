@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <title>SignalWire Guides</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="/assets/css/main.css">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="/">SignalWire Guides</a>
+      </div>
+    </nav>
+    <div class="container main-area">
+      <h1 id="signalwire-101">SignalWire 101</h1>
+
+<p>Welcome! My name is Luca, and I am the lead solutions architect at SignalWire. This post marks the beginning of a series that will take us on a trip through all of SignalWire’s features and offerings.</p>
+
+<p>Today, we will be going through a crash course that will have us receiving your first phone call on your SignalWire account.</p>
+
+<p>First of all, we will register for a new SignalWire account. Let’s go to the home page and click on Sign Up in the top right. Enter your email and we are off to the races!</p>
+
+<p><img src="/assets/sign_up.png" alt="SignalWire Home Page" /></p>
+
+<p>You will receive an email with a confirmation link, and by clicking it you will end up on the account setup page. The first field to fill in is the Space name. What is a Space, you will ask? It is your personal SignalWire domain to which all services are tied.
+The rest are just the usual sign up fields.</p>
+
+<p><img src="/assets/space_name.png" alt="SignalWire Sign Up" /></p>
+
+<p>Once we are signed up, we will find ourselves on the Dashboard, the command center of your SignalWire account.</p>
+
+<p>Your first step will be setting up a Project. They are used to group up resources according to your preference, such as by customer account, by geographical region, or any other classification.</p>
+
+<p><img src="/assets/new_project.png" alt="New Project" /></p>
+
+<p>To set up an inbound phone call, we will need two elements: a phone number, and a LaML bin to handle the call.
+Let’s start from the LaML bin. Click on <code class="highlighter-rouge">LaML</code>, then pick the <code class="highlighter-rouge">Bins</code> entry from the menu, and hit <code class="highlighter-rouge">New</code>.</p>
+
+<p>You might be wondering what LaML is. It is our XML-flavored markup language, and each document describes a behavior for your call. For example, in this tutorial we will be creating an “Hello World” document that will just say that phrase using text-to-speech.</p>
+
+<p>Documentation on LaML is available <a href="https://docs.signalwire.com/topics/laml-xml/#laml-xml-specification">on the SignalWire website</a>.</p>
+
+<p><img src="/assets/new_laml_bin.png" alt="New LaML Bin" /></p>
+
+<p>The <code class="highlighter-rouge">&lt;Say&gt;</code> tag is the relevant part here. It has many  options, and support for quite a few languages. We will stay with the defaults for now, but you can find more information <a href="https://docs.signalwire.com/topics/laml-xml/#voice-laml-say">here</a>.</p>
+
+<p>Here is how your bin contents should look like:</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/b0e0100acbba10acb1b459c78acce878.js"> </script>
+
+<p>Save your LaML bin and one side of our call is set up.</p>
+
+<p>Next, you will need a phone number. Click “Phone numbers”, hit “New”, and pick a number you like. We support searching by area code and specific strings of text. I recommend starting with a local number.</p>
+
+<p><img src="/assets/pick_number.png" alt="Pick Phone Number" /></p>
+
+<p>Now we have two more steps to go through: the first is pointing our new phone number to the LaML bin we created earlier, and after we do that we will need to verify another number to be able to dial in.</p>
+
+<p>We will quickly go back to the LaML page and copy the bin’s URL, then set this as the handler for the number</p>
+
+<p><img src="/assets/copy_bin_url.png" alt="Copy Bin URL" /></p>
+
+<p>Click “Edit Settings” on the phone number detail page, set the handler as “LaML Webhooks, and put your URL in the “When a call comes in:” field, then hit Save.</p>
+
+<p><img src="/assets/set_bin.png" alt="Set Bin" /></p>
+
+<p>Trial accounts are limited to interacting with verified phone numbers, both inbound and outbound. You can also add a credit card to your account and deposit some credit to exit trial mode.</p>
+
+<p>Let’s quickly get a number verified by hitting “Phone Numbers” then picking “Verified”. Just add a new number, and put in your own cell phone. You will receive a phone call that will give you a six digit code, which you can simply enter in the form.</p>
+
+<p><img src="/assets/verify_number.png" alt="Verify Number" /></p>
+
+<p>It is now time to test our setup: using the verified phone, place a call to the DID you bought. You will be greeted with the familiar words all developers like to hear, “Hello World!”.</p>
+
+    </div>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>
+  </body>
+</html>

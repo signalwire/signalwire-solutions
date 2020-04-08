@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <title>SignalWire Guides</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="/assets/css/main.css">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="/">SignalWire Guides</a>
+      </div>
+    </nav>
+    <div class="container main-area">
+      <h1 id="sip-on-signalwire">SIP on SignalWire</h1>
+
+<p>In our previous posts, we have explored the many opportunities the LaML API provides for application developers.</p>
+
+<p>SignalWire also supports the standard in VoIP telephony, the SIP protocol. This allows you to connect your devices and systems to the SignalWire Cloud, and to leverage the available features from existing SIP infrastructure.</p>
+
+<h2 id="creating-and-registering-a-sip-endpoint">Creating and registering a SIP endpoint</h2>
+
+<p>To register and use SIP endpoints to place calls, head to the <code class="highlighter-rouge">SIP</code> page in your dashboard.</p>
+
+<p>First of all, let’s take a look at the <code class="highlighter-rouge">SIP Settings</code> tab.</p>
+
+<p><img src="/assets/sip_profile_settings.png" alt="SignalWire SIP Profile Settings" /></p>
+
+<p>This is where the most important options for SIP are set. Your SIP registration URI has been filled in with a random string, and you can change that to something more legible if you so wish.</p>
+
+<p>Setting a default number to use as caller ID is also possible, and you can manage your codec settings from here.</p>
+
+<p>Endpoints can also be created programmatically as discussed <a href="https://signalwire.com/blogs/product/programmable-sip-connectivity-and-routing">in this article</a>. That would be useful for an application needing to create many endpoints for a set of clients.</p>
+
+<h3 id="registering-to-signalwire">Registering to SignalWire</h3>
+
+<p>Depending on your SIP client, you might have to enter settings in a different way. The generic setup would be:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Username: the username portion of the SIP address you set up
+Domain: the domain portion of the SIP address
+Password: the password you set
+</code></pre></div></div>
+
+<p>A SIP desktop client example is Bria, a very feature-complete and usable softphone. Setting that up for SignalWire SIP is very simple.</p>
+
+<p><img src="/assets/bria_settings.png" alt="SignalWire SIP Bria Settings" /></p>
+
+<p>You could of course use the same credentials to connect your hardware phone or a PBX such as FusionPBX or FreePBX.</p>
+
+<h3 id="making-calls-from-your-endpoint">Making calls from your endpoint</h3>
+
+<p>After registering, just dial a PSTN number (try <code class="highlighter-rouge">+1-202-762-1401</code> for the Washington D.C. weather phone). You can also dial SIP addresses straight away.</p>
+
+<h2 id="triggering-outbound-calls-via-laml">Triggering outbound calls via LaML</h2>
+
+<p>If you are using LaML, you might want to dial out to a SIP target using the <code class="highlighter-rouge">&lt;Dial&gt;</code> verb. In that case, the <code class="highlighter-rouge">&lt;Sip&gt;</code> tag is what you would use.</p>
+
+<p>Documented <a href="https://docs.signalwire.com/topics/laml-xml/#voice-laml-dial-sip">here</a>, it allows you to dial out to SIP addresses with various options. You can set a <code class="highlighter-rouge">StatusCallback</code> URL as with other <code class="highlighter-rouge">&lt;Dial&gt;</code> targets, to get status updates during the process.</p>
+
+<p>SignalWire supports authenticating to a SIP proxy via the <code class="highlighter-rouge">username</code> and <code class="highlighter-rouge">password</code> attributes, and the standard SIP URI components can be added to drive specific application needs.</p>
+
+<p>Here is a full example:</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/476ec2f7f6137d84aca2d039904f5cad.js"> </script>
+
+<blockquote>
+  <p>Caller IDs work differently when dialing out to SIP: you can use any ID, and it assumed to be validated by your SIP upstream. This applies both on LaML and outbound REST calls.</p>
+</blockquote>
+
+<h2 id="making-outbound-calls-via-the-laml-api">Making outbound calls via the LaML API</h2>
+
+<p>To trigger outbound calls using the LaML API, you can use the Calls LaML REST API documented <a href="https://docs.signalwire.com/topics/laml-api/#api-reference-calls-create-a-call">here</a>.</p>
+
+<p>The method supports a long list of parameters, and the relevant ones for SIP are <code class="highlighter-rouge">SipAuthUsername</code> and <code class="highlighter-rouge">SipAuthPassword</code>. The <code class="highlighter-rouge">Url</code> would support the same structure and SIP options as the LaML version.</p>
+
+<p>A full example in CURL and Ruby:</p>
+
+<noscript><pre>400: Invalid request</pre></noscript>
+<script src="https://gist.github.com/a811a24f921d0429127f9983bf069c92.js"> </script>
+
+<h2 id="inbound-sip-the-domain-application">Inbound SIP: the Domain Application</h2>
+
+<p>To receive calls from a SIP source to your SignalWire account in a Bring Your Own Connectivty (BYOC) scenario, you would use the SIP Domain Application features.</p>
+
+<p>It allows you to create a domain to which to point all of your SIP calls.</p>
+
+<p><img src="/assets/creating_domain_app.png" alt="Setting up a Domain App" /></p>
+
+<p>Dialing <code class="highlighter-rouge">anything@your-domain.dapp.signalwire.com</code> will get the call into the LaML webhook you specify.</p>
+
+<p>This allows you to use connectivity from any provider capable of sending a call to a SIP address to use SignalWire services.</p>
+
+<blockquote>
+  <p>Always use whitelisting of IPs if possible, as otherwise all requests to the domain will be processed.</p>
+</blockquote>
+
+    </div>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>
+  </body>
+</html>
