@@ -42,7 +42,18 @@ Second, you need to have at least one phone number in your SignalWire account, t
 
 The third and final piece is a Ruby file containing the necessary code. I will be repeating the client instantiation code in each block throughout the article so they can be ran stand-alone.
 
-{% gist a442b6026b07c438761ce1274e6ef4ce %}
+```ruby
+require 'signalwire/sdk'
+client = Signalwire::REST::Client.new 'your-project', 'your-token', signalwire_space_url: "example.signalwire.com"
+
+call = client.calls.create(
+  url:  'http://YOURSPACE.signalwire.com/YOUR-LAML-BIN-ID',
+  to:   '+1555001122333', # This needs to be your destination number, verified if in trial
+  from: '+15559988777' # This is one phone number from your SignalWire account
+)
+
+puts call.sid
+```
 
 Run your Ruby code and listen to the reminder!
 
@@ -52,15 +63,54 @@ ruby call.rb
 
 ## Sending a text message or MMS
 
-In much the same fashion, it is very easy to send out a text message or an MMS to a phone number. To attach a media file to a message, simply specify a `media_url` parameter, pointing at a file available via HTTP. The size limit is currently 0.5Mb and the list of accepted MIME types can be found [here](https://docs.signalwire.com/topics/laml-xml/#messaging-laml-overview-mime-types).
+In much the same fashion, it is very easy to send out a text message or an MMS to a phone number. 
 
-{% gist b89d156c02403413de8ed043f994bff5 %}
+```ruby
+require 'signalwire/sdk'
+client = Signalwire::REST::Client.new 'your-project', 'your-token', signalwire_space_url: "example.signalwire.com"
+
+message = client.messages.create(
+  to:   '+1555001122333', # This needs to be your destination number, verified if in trial
+  from: '+15559988777' # This is one phone number from your SignalWire account
+  body: 'Hello from SignalWire'
+)
+
+puts message.inspect # not necessary, just taking a peek
+```
+
+To attach a media file to a message, simply specify a `media_url` parameter, pointing at a file available via HTTP. The size limit is currently 0.5Mb and the list of accepted MIME types can be found [here](https://docs.signalwire.com/topics/laml-xml/#messaging-laml-overview-mime-types).
+
+```ruby
+require 'signalwire/sdk'
+client = Signalwire::REST::Client.new 'your-project', 'your-token', signalwire_space_url: "example.signalwire.com"
+
+mms = client.messages.create(
+  to:   '+15550011222',
+  from: '+15559988777'
+  body: 'Here is a photo from my holidays',
+  media_url: 'https://SOME-EXAMPLE-URL'
+)
+
+puts mms.inspect
+```
 
 ## Sending a fax
 
 To send a fax, just use the client in a very similar way to an MMS. In this case, we will include a `status_callback` URL to introduce that concept.
 
-{% gist f32dceb458f2ae087cdd906c722966c6 %}
+```ruby
+require 'signalwire/sdk'
+client = Signalwire::REST::Client.new 'your-project', 'your-token', signalwire_space_url: "example.signalwire.com"
+
+fax = client.fax.faxes.create( # syntax is a little tricky here due to namespacing
+  to:   '+1555001122333',
+  from: '+15559988777'
+  media_url: 'https://SOME-EXAMPLE-URL/document.pdf',
+  status_callback: 'https://YOUR-APPLICATION-URL/CALLBACK-PATH'
+)
+
+puts fax.inspect
+```
 
 ### Using status callbacks
 
@@ -72,7 +122,16 @@ For example, when sending a fax, the endpoint will receive form encoded paramete
 
 The last example we are going to look at is how to list the calls that have been made on your project. This could be useful for billing or just for your internal reference.
 
-{% gist 279433018832d097824c582f80192164 %}
+```ruby
+require 'signalwire/sdk'
+client = Signalwire::REST::Client.new 'your-project', 'your-token', signalwire_space_url: "example.signalwire.com"
+
+calls = client.calls.list
+
+calls.each do |record|
+  puts record.inspect # prints information about each call
+end
+```
 
 ## Conclusions
 
