@@ -78,6 +78,10 @@ In a more useful scenario, you will want to intercept the message so you can do 
 
 will result in a reply to each message received. `<Message>` supports other parameters, most notably `to` and `from` which allow you to send a reply to a different number than the original sender. You can find the documentation [here](https://docs.signalwire.com/topics/laml-xml/?xml#messaging-laml-message).
 
+As usual, use your dashboard to set it as the messaging handler.
+
+![SMS Handling Settings](/assets/set_sms_handler.png)
+
 To handle messages programmatically, the best way is to set up your own web application. The following Flask app will reply in the same way as the above LaML bin, but allows you to do something useful with the `From` and `Body` fields.
 
 ```python
