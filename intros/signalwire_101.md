@@ -32,7 +32,12 @@ The `<Say>` tag is the relevant part here. It has many  options, and support for
 
 Here is how your bin contents should look like:
 
-{% gist b0e0100acbba10acb1b459c78acce878 %}
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Say>Hello World.</Say>
+</Response>
+```
 
 Save your LaML bin and one side of our call is set up.
 
