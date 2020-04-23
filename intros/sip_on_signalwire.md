@@ -16,6 +16,10 @@ This is where the most important options for SIP are set. Your SIP registration 
 
 Setting a default number to use as caller ID is also possible, and you can manage your codec settings from here.
 
+Create your endpoint by clicking on `Endpoints` and then `New`.
+
+![Create SIP endpoint](/assets/create_sip_endpoint.png)
+
 Endpoints can also be created programmatically as discussed [in this article](https://signalwire.com/blogs/product/programmable-sip-connectivity-and-routing). That would be useful for an application needing to create many endpoints for a set of clients.
 
 ### Registering to SignalWire
