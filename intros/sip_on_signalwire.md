@@ -53,7 +53,16 @@ SignalWire supports authenticating to a SIP proxy via the `username` and `passwo
 
 Here is a full example:
 
-{% gist 476ec2f7f6137d84aca2d039904f5cad %}
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Dial callerId="+18889090909">
+    <Sip username="youruser" password="yourpass">
+      sip:user@domain.com;transport=udp?header1=foo&header2=bar
+    </Sip>
+  </Dial>
+</Response>
+```
 
 > Caller IDs work differently when dialing out to SIP: you can use any ID, and it assumed to be validated by your SIP upstream. This applies both on LaML and outbound REST calls.
 
