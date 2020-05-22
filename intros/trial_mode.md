@@ -41,6 +41,8 @@ If your card is declined:
 - If you are using a VPN or corporate firewall, try clearing your cache or connecting through a different network, then remove the card and add it again.
 - Pre-paid or secured credit cards are also blocked.
 
+You can also refer to [our knowledge base entry](https://signalwire.force.com/help/s/article/Credit-Card-Rejected-When-Topping-Up-Account) for additional information.
+
 ## Setting up auto top up
 
 If you are planning on using your SignalWire account for production traffic, you should add an auto top up method to ensure you do not run out of funds.
