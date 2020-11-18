@@ -53,3 +53,5 @@
 .jekyll-cache
 .sass-cache
 node_modules
+obj
+bin
