@@ -57,3 +57,4 @@ obj
 bin
 .env
 .bundle
+vendor/
