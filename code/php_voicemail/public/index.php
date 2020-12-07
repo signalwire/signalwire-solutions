@@ -13,7 +13,7 @@ $app->post('/', function (Request $request, Response $response, $args) {
 
     $dial = $laml->dial('', array('action' => '/voicemail', 'answerOnBridge' => true));
     // the below ENV variable should be replaced with a database lookup
-    $dial->number(getenv('FROM_NUMBER'), array('url' => '/screen'));
+    $dial->number(getenv('TO_NUMBER'), array('url' => '/screen'));
 
     $xmlResponse = $response->withHeader('Content-type', 'application/xml');
     $xmlResponse->getBody()->write(strval($laml));
@@ -31,7 +31,7 @@ $app->post('/screen', function (Request $request, Response $response, $args) {
     'timeout' => 5
     ));
 
-    $message = "You have a call from: <say-as interpret-as=\"telephone\" format=\"1\">{$post['From']}</say-as>";
+    $message = "You have a call from: {$post['From']}";
     $gather->say("{$message}. Press any digit to accept the call.");
     $laml->say('Hanging up');
     $laml->hangup();
@@ -63,8 +63,12 @@ $app->post('/voicemail', function (Request $request, Response $response, $args) 
             'finishOnKey' => '#'
         ));
     } else {
-        $laml->say('Sorry, your call could not be connected at this time');
+        $laml->hangup();
     }
+
+    $xmlResponse = $response->withHeader('Content-type', 'application/xml');
+    $xmlResponse->getBody()->write(strval($laml));
+    return $xmlResponse;
 });
 
 $app->post('/store', function (Request $request, Response $response, $args) {
