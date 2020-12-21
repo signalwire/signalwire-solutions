@@ -1,0 +1,37 @@
+[
+    {
+	"message": "Ho Ho Ho thank you for contacting me, do you want to talk about Christmas?",
+	"nextLevel": "yes|ok|start|begin|yeah|yep|sure"
+    },
+
+    {
+	"message": "Well now, I am going to have to check my list and check it twice but can you tell me if you have been naughty or nice?",
+	"nextLevel": "nice",
+	"wrongMsg": "Ho Ho Ho! I saw you last week being very nice!",
+	"rightMsg": "You really are very nice, thank you so much for being good!",
+	"offense": "fuck|shit|dick|ass|cock|cunt|prick|jerk|fat|bastard",
+	"offenseMsg": "Ho Ho Nooooo! I'm sorry, but its coal for you this year!"
+    },
+
+    {
+	"message": "I can't wait to bring you presents this year! I am wondering, who's your favorite reindeer?",
+	"nextLevel": "dasher|dancer|prancer|vixen|comet|cupid|donner|blitzen|rudolph|rudolf",
+	"wrongMsg": "I think you have me mixed up with the Easter Bunny!",
+	"rightMsg": "Ho Ho Ho! That's my favorite too, but don't tell anyone, they get jealous!",
+	"offense": "fuck|shit|dick|ass|cock|cunt|prick|jerk|fat|bastard",
+	"offenseMsg": "Ho Ho Nooooo! I'm sorry, but its coal for you this year!"
+    },
+
+    {
+	"message": "I wish you and your family holiday cheer, my last question is what do you want for Christmas this year?",
+	"nextLevel": ".*",
+	"wrongMsg": "I didn't catch that?",
+	"rightMsg": "Ho Ho Ho! thank you! The elves will get to work on that right away!",
+	"offense": "fuck|shit|dick|ass|cock|cunt|prick|jerk|fat|bastard",
+	"offenseMsg": "Ho Ho Nooooo! I'm sorry, but its coal for you this year!"
+    },
+    {
+	"message": "Ho Ho Ho! Merry Christmas",
+	"playfile": "https://kylo.signalwire.cloud/~anthm/sounds/jb.mp3"
+    }
+]

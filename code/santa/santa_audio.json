@@ -1,0 +1,37 @@
+[
+    {
+	"message": "https://kylo.signalwire.cloud/~anthm/santa/santa_intro.wav",
+	"nextLevel": "yes|ok|start|begin|yeah|yep|sure"
+    },
+
+    {
+	"message": "https://kylo.signalwire.cloud/~anthm/santa/santa_naughty_or_nice.wav",
+	"nextLevel": "nice",
+	"wrongMsg": "https://kylo.signalwire.cloud/~anthm/santa/santa_very_nice.wav",
+	"rightMsg": "https://kylo.signalwire.cloud/~anthm/santa/santa_being_good.wav",
+	"offense": "fuck|shit|dick|ass|cock|cunt|prick|jerk|fat|bastard",
+	"offenseMsg": "https://kylo.signalwire.cloud/~anthm/santa/santa_coal.wav"
+    },
+
+    {
+	"message": "https://kylo.signalwire.cloud/~anthm/santa/santa_reindeer.wav",
+	"nextLevel": "dasher|dancer|prancer|vixen|comet|cupid|donner|blitzen|rudolph|rudolf",
+	"wrongMsg": "https://kylo.signalwire.cloud/~anthm/santa/santa_easter_bunny.wav",
+	"rightMsg": "https://kylo.signalwire.cloud/~anthm/santa/santa_jealous.wav",
+	"offense": "fuck|shit|dick|ass|cock|cunt|prick|jerk|fat|bastard",
+	"offenseMsg": "https://kylo.signalwire.cloud/~anthm/santa/santa_coal.wav"
+    },
+
+    {
+	"message": "https://kylo.signalwire.cloud/~anthm/santa/santa_want.wav",
+	"nextLevel": ".*",
+	"wrongMsg": "https://kylo.signalwire.cloud/~anthm/santa/santa_didnt_catch.wav",
+	"rightMsg": "https://kylo.signalwire.cloud/~anthm/santa/santa_thank_you.wav",
+	"offense": "fuck|shit|dick|ass|cock|cunt|prick|jerk|fat|bastard",
+	"offenseMsg": "https://kylo.signalwire.cloud/~anthm/santa/santa_coal.wav"
+    },
+    {
+	"message": "https://kylo.signalwire.cloud/~anthm/santa/santa_merry.wav",
+	"playfile": "https://kylo.signalwire.cloud/~anthm/sounds/jb.mp3"
+    }
+]
