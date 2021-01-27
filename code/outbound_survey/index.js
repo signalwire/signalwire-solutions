@@ -1,5 +1,6 @@
 const express = require("express");
 const { RestClient } = require('@signalwire/node')
+require('dotenv').config()
 
 const i18n = {
   'intro': {
@@ -61,7 +62,7 @@ app.post("/start", (req, res, next) => {
   respondAndLog(res, response);
  });
 
- app.post("/question", (req, res, next) => {
+app.post("/question", (req, res, next) => {
   var response = new RestClient.LaML.VoiceResponse();
   var lang = req.query.lang
 
@@ -73,6 +74,18 @@ app.post("/start", (req, res, next) => {
     gather = response.gather({ input: 'speech', speechTimeout: 'auto' })
     sayWithOptions(i18n['question'][lang], gather, lang)
   }
-
   respondAndLog(res, response);
+ });
+ 
+ app.post("/trigger", (req, res, next) => {
+  const { RestClient } = require('@signalwire/node')
+  const client = new RestClient(process.env.SIGNALWIRE_PROJECT_KEY, process.env.SIGNALWIRE_TOKEN, { signalwireSpaceUrl: process.env.SIGNALWIRE_SPACE })
+
+client.calls
+      .create({
+         url: process.env.APP_DOMAIN + '/start',
+         to: req.body.toNumber,
+         from: process.env.SIGNALWIRE_FROM_NUMBER
+       })
+      .then(call => console.log(call.sid))
  });
