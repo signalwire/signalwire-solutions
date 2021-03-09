@@ -2,8 +2,10 @@ from flask import Flask, request
 from signalwire.voice_response import VoiceResponse
 
 app = Flask(__name__)
-blockList = ['+15551238104']
 
+def get_blocklist():
+    # there is a default here you can change if you don't want to use the environment variable
+    return os.getenv('BLOCKLIST', '+1555778899').split(',')
 
 @app.route('/check', methods=['POST'])
 def check_number():
@@ -11,9 +13,8 @@ def check_number():
     from_number = request.form.get('From')
     print(from_number)
 
-    if from_number not in blockList:
-        response.redirect('https://bowl-test.signalwire.com/laml-bins/121a19d8-4de2-4e41-8e0f-9b7e7efc4188')
-	# response.redirect('PATH-TO-NEXT-CODE-SEGMENT)
+    if from_number not in get_blocklist():
+	response.redirect('PATH-TO-NEXT-CODE-SEGMENT')
 
     else:
         response.hangup()
