@@ -1,8 +1,9 @@
 from flask import Flask, request
 from signalwire.voice_response import VoiceResponse
+import os
 
 app = Flask(__name__)
-blockList = ['+15551238104']
+blockList = os.environ.get('BLOCK_LIST').split(',')
 
 
 @app.route('/check', methods=['POST'])
@@ -12,8 +13,7 @@ def check_number():
     print(from_number)
 
     if from_number not in blockList:
-	response.redirect('PATH-TO-NEXT-CODE-SEGMENT)
-
+        response.redirect(os.environ.get('REDIRECT_PATH'))
     else:
         response.hangup()
 
@@ -22,3 +22,4 @@ def check_number():
 
 if __name__ == "__main__":
     app.run()
+
