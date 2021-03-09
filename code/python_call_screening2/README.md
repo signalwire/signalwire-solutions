@@ -8,7 +8,29 @@ You will need the Flask framework and the SignalWire Python SDK downloaded.
 https://flask.palletsprojects.com/en/1.1.x/installation/
 https://docs.signalwire.com/topics/laml-api/#laml-rest-api-client-libraries-and-sdks-python
 
+## Configuring the application
 
-You may need to use a tunnel for testing this code – we recommend NGROK. 
-https://ngrok.com/
+To set the block list, you can set the `BLOCKLIST` environment variable to a value of a comma-separated list of numbers. For example:
+
+```
+export BLOCKLIST=+15554433222,+15559988777
+```
+
+If you prefer not to use enviroment variables, you can set an additional number or demo URL as displayed in the code below with the number +15557778899
+or the redirect path https://some_redirect_url.
+
+```
+return os.getenv('BLOCK_LIST', '+1555778899').split(',')
+```
+
+ 
+```
+response.redirect(os.environ.get('REDIRECT_PATH', 'https://some_redirect_url'))
+```
+
+To run the application, execute `export FLASK_APP=app.py` then run `flask run`.
+
+## Testing locally
+
+You may need to use a tunnel for testing this code – we recommend [NGROK](https://ngrok.com/).
 
