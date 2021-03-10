@@ -58,3 +58,4 @@ bin
 .env
 .bundle
 vendor/
+__pycache__

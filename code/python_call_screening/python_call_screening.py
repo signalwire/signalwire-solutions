@@ -17,7 +17,7 @@ def check_number():
     from_number = request.form.get('From')
     
     if from_number not in get_blocklist():
-        response.redirect(os.environ.get('REDIRECT_PATH', 'https://some-demo-url'))
+        response.redirect(os.environ.get('REDIRECT_PATH', 'https://example.signalwire.com/laml-bins/55ab7685-e9c3-4449-b1f0-07ff083d041e'))
 
     else:
         response.hangup()
