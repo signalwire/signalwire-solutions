@@ -24,6 +24,8 @@ There are no specific requirements other than `npm`. Make sure have NodeJS versi
 
 ## Our sample code
 
+You can find the repository for this example [at this Github URL](https://github.com/signalwire/signalwire-guides/tree/master/code/gcf_laml).
+
 The function we developed as a sample is pretty straightforward, and as you can see is plain Node Javascript, without anything specific to being deployed on Google Cloud Functions.
 
 ```js
