@@ -48,7 +48,7 @@ Lastly, we need to put in code for the sake of debugging the LaML. LaML requires
   response.to_s
 ```
 
-When `[:AnsweredBy]` returns any value other than human, the XML code is a simple <Say>.  
+When `[:AnsweredBy]` returns any value other than human, the XML code is a simple `<Say>`.  
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -57,7 +57,7 @@ When `[:AnsweredBy]` returns any value other than human, the XML code is a simpl
 </Response>
 ```
 
-When `[:AnsweredBy]` returns human, the XML code consists of a <Dial>. 
+When `[:AnsweredBy]` returns human, the XML code consists of a `<Dial>`. 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
