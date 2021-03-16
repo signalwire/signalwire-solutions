@@ -1,7 +1,7 @@
 # Answering Machine Detection
 This guide utilizes Answering Machine Detection to determine whether a human or voicemail machine has picked up the phone so that it can either dial a number to connect someone to the human or leave a message for the voicemail box. 
 
-When a call is initiated with ```machine_detection``` set to ```DetectMessageEnd```, there is a parameter posted to the webhook called AnsweredBy. The potential options here are machine_end_other, machine_end_beep, machine_end_silence, and human. If the parameter returned is anything other than human, this example will take a short pause to wait for the beep and then play a message for the intended recipient. If the parameter returned is human, it will dial a number to connect the human to another person.
+When a call is initiated with `machine_detection` set to `DetectMessageEnd`, there is a parameter posted to the webhook called AnsweredBy. The potential options here are `machine_end_other`, `machine_end_beep`, `machine_end_silence`, and `human`. If the parameter returned is anything other than human, this example will take a short pause to wait for the beep and then play a message for the intended recipient. If the parameter returned is human, it will dial a number to connect the human to another person.
 
 We start with the necessary imports below and set the port to 8080. 
 
@@ -21,7 +21,7 @@ post '/start' do
   response = Signalwire::Sdk::VoiceResponse.new
 ```
 
-Now we use a switch statement to designate that we will take different actions depending on the value of ```[:AnsweredBy]```. You can see below that if anything other than human is returned, this code will output "It's a machine", take a brief pause to allow the voicemail system time to reach the recording beep, leave a voicemail for the intended recipient, and hang up. If the value returned is human, this code will output "We got ourselves a live human here!" and then dial the number of your agent (or the next part of your standard call flow). In the dial, you have the option to either hard code the number you would like to dial or use environment variables. 
+Now we use a switch statement to designate that we will take different actions depending on the value of `[:AnsweredBy]`. You can see below that if anything other than human is returned, this code will output "It's a machine", take a brief pause to allow the voicemail system time to reach the recording beep, leave a voicemail for the intended recipient, and hang up. If the value returned is human, this code will output "We got ourselves a live human here!" and then dial the number of your agent (or the next part of your standard call flow). In the dial, you have the option to either hard code the number you would like to dial or use environment variables. 
 
 
 ```ruby
@@ -48,8 +48,33 @@ Lastly, we need to put in code for the sake of debugging the LaML. LaML requires
   response.to_s
 ```
 
+When `[:AnsweredBy]` returns any value other than human, the XML code is a simple <Say>.  
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+<Say>Hello! This is the County Medical Center. We are calling you to confirm your doctor appointment. Please call us back as soon as possible.</Say>
+</Response>
+```
+
+When `[:AnsweredBy]` returns human, the XML code consists of a <Dial>. 
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Dial>
+    <Number>
+      202-762-1401
+    </Number>
+  </Dial>
+</Response>
+ ```
+  
 ## Triggering calls
-Below are two different ways that you could initiate the call with machine detection on. In the first, you can use environment variables and the Ruby SDK to initiate your call. The second is an example of how you can run a cURL command in your terminal in order to instantiate your call. Both are acceptable methods - the key is to make sure that however your call is initiated, you have ```machine_detection: "DetectMessageEnd"``` enabled or it will not work correctly. 
+There are a number of different ways that you could trigger your outbound call, but here are two examples using Ruby and cURL. The most important takeaway from these is that no matter how you initiate your call, you must have `machine_detection` set to `DetectMessageEnd`. There is another paramter option `enable`, but that will not work in the same way. The parameter `enable` would work if you wanted to do some action for a human and hang up if the answering party is a machine, however, it will not allow you to take specific actions in both scenarios. 
+
+You will need your SignalWire Project ID, auth token, and space URL. You can easily find all three values in a copyable format in your SignalWire Dashboard by clicking the API tab on the lefthand sidebar. 
+
+As the above code is written in Ruby, you can always stay consistent and iniate the call using the SignalWire Ruby SDK. You can either set environment variables on your computer, or you can replace the ENV variables with your Project ID, auth token, and space URL. 
 
 ```ruby
 client = Signalwire::REST::Client.new ENV['SIGNALWIRE_PROJECT_KEY'], ENV['SIGNALWIRE_TOKEN'], signalwire_space_url: ENV['SIGNALWIRE_SPACE']
@@ -61,6 +86,9 @@ client = Signalwire::REST::Client.new ENV['SIGNALWIRE_PROJECT_KEY'], ENV['SIGNAL
     machine_detection: "DetectMessageEnd"
   )
 ```
+
+You can also use cURL on your commmand prompt or with a tool such as postman to send HTTP requests to create the call. You will need to replace the ProjectID and Space URL within the cURL URL, as well as the webhook pointing to this code, the To number, the From number, and the authentication at the bottom. 
+
 
 ```bash
 curl https://YOURSPACE.signalwire.com/api/laml/2010-04-01/Accounts/YOUR-PROJECT-ID/Calls.json \
