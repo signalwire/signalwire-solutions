@@ -7,8 +7,8 @@ WORKDIR /app
 COPY Gemfile Gemfile.lock ./
 RUN bundle install
 
-COPY amd.rb .
+COPY app.rb .
 
 EXPOSE 8080
 
-CMD ["bundle", "exec", "ruby", "amd.rb"]
+CMD ["bundle", "exec", "ruby", "app.rb"]

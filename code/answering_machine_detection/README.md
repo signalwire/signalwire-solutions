@@ -102,16 +102,13 @@ curl https://YOURSPACE.signalwire.com/api/laml/2010-04-01/Accounts/YOUR-PROJECT-
 
 ## Docker instructions
 
-Copy `env.example` to `.env` and edit.
+Copy `env.example` to `.env` and edit the file, adding the necessary SignalWire credentials and other phone numbers you will need.
 
-Build with `docker build . -t rubyamd`
-
-Run with `docker run -it --rm -p 8080:8080 --name rubyamd --env-file .env rubyamd`
-
+Build the image with `docker build . -t rubyamd`, then run the script using `docker run -it --rm -p 8080:8080 --name rubyamd --env-file .env rubyamd`.
 
 ## Testing locally
 
-You may need to use a SSH tunnel for testing this code – we recommend [ngrok](https://ngrok.com/). After starting the tunnel, you can use the URL you receive from `ngrok` in your webhook configuration for your phone number.
+You may need to use a SSH tunnel for testing this code – we recommend [ngrok](https://ngrok.com/). After starting the tunnel pointed at your port `8080`, you can use the URL you receive from `ngrok` in your webhook configuration for your phone number.
 
 ## Sign Up Here
 
