@@ -36,3 +36,12 @@ If you are running the application locally, first load  the `.env` file with `se
 
 It is simpler to run the application via Docker, by first building the image with `docker build -t nodelenny .` followed by `docker run -it --rm -v ``pwd``/.node-persist:/app/.node-persist --name nodelenny --env-file .env nodeivr`.
 
+## Documentation links
+
+[Relay Documentation](https://docs.signalwire.com/topics/relay/#relay-documentation)
+
+[Relay Docker Images](https://github.com/signalwire/signalwire-relay-docker)
+
+[SignalWire 101](https://signalwire.com/resources/getting-started/signalwire-101)
+
+Copyright 2021, [SignalWire Inc.](https://signalwire.com)
