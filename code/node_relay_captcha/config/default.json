@@ -1,0 +1,47 @@
+{
+  "config": {
+		"general": {
+				"captchaTries": 2,
+				"introMessage": "Hello. To complete your call, Please verify you are a human, by dialing or speaking the answer to this simple question.",
+				"humanMessage": "That is correct. You are probably a human, enjoy your call!",
+				"wrongAnswerMessage": "That is wrong, you are probably a robot. That's ok, I am a robot too!",
+				"missedDetectionMessage": "I didn't quite catch that.",
+				"scammerMessage": "Good day Sir!",
+				"callFailureMessage": "Sorry, there was an error completing your call, Goodbye!",
+				"mode": "captcha",
+				"enableLenny": true
+		},
+		"tts": {
+				"lang": "en-US",
+				"gender": "female"
+		},
+		
+		"numberMap": {"+15557788999": "+15554433222",
+						"+15559988000": "+15559922111"
+					},
+
+		"lennyConfig": {
+				"soundBase": "https://s3.us-east-2.amazonaws.com/files.signalwire.com/173aba80-58fc-415d-b6ed-df6e357e766f/d1a906e8-f5e5-4939-8c07-31105b56ec41/Files/Lenny",
+				"greeting": "Lenny1.mp3",
+				"background": "backgroundnoise.mp3",
+
+				"attentionGetters": ["Lenny2.mp3",
+					"Lenny8.mp3",
+					"Lenny9.mp3",
+					"Lenny10.mp3"],
+
+				"responseGetters": ["Lenny3.mp3",
+					"Lenny4.mp3",
+					"Lenny5.mp3",
+					"Lenny6.mp3",
+					"Lenny7.mp3",
+					"Lenny11.mp3",
+					"Lenny12.mp3",
+					"Lenny13.mp3",
+					"Lenny14.mp3",
+					"Lenny16.mp3",
+					"Lenny16.mp3"]
+		}
+  }
+}
+
