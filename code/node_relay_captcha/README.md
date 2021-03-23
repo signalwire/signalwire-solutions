@@ -1,5 +1,11 @@
 # Lenny Spam Call Filter with Relay and Node.js
 
+Robocalling and spam calls have been increasing in number over the last year. Only in the US, there were 165.1 million robocalls placed in 2020, an average of 14.1 per person, including children and people who do not have a phone!
+
+SignalWire can help with its Relay technology, which allows us to easily create a robocall protection service.
+
+## The application
+
 This application implements a call forwarding service with a voice CAPTCHA to determine if the caller is a human. If they are, it forwards the call to your phone number or the one you configured as the destination.
 
 A [CAPTCHA](https://en.wikipedia.org/wiki/CAPTCHA) is an automated mechanism used to determine if the user of a service is a human or a machine. You have certainly interacted with visual ones such as "pick all of the pictures with a boat in it" on websites. In this application, we ask the caller for the result of the sum of two random numbers.
@@ -8,7 +14,9 @@ In case the incoming call is determined to be a robo-call, it is sent straight t
 
 Once the calls are connected, the user that received the call on his private number can press `**` on his DTMF keypad at any time and have the call instantly flagged as spammer and added to the database. That way, if a human unwanted caller makes it through the CAPTCHA, they can still be banned.
 
-The application uses [node-persist](https://github.com/simonlast/node-persist), a simple file-based database, to keep track of flagged numbers and automatically reject calls. In a production application, you would maybe use a different database such as PostgreSQL.
+The application uses [node-persist](https://github.com/simonlast/node-persist), a simple file-based database, to keep track of flagged numbers and automatically reject calls. In a production application, you would maybe use a different database such as PostgreSQL. Every phone number is saved and remembered, so any callers who you want to receive calls from will automatically get through the second time they dial in. Spammers, on the other hand, will just be sent to have a chat with Lenny!
+
+Remember, the application database is persistent, so you will have to remove the `.node-persist` folder in the directory to reset the database if you would like to test multiple times with the same number, or your call will be handled automatically as a spammer or a human depending on how you responded the first time.
 
 ### What is Lenny?
 
@@ -28,21 +36,31 @@ You also need a DID (phone number) you either purchased from SignalWire or verif
 
 If you sign up for the first time, your account will be start in trial mode, which you can exit by making a manual top up of $5.00. You can find more information [on the Trial Mode resource page](https://signalwire.com/resources/getting-started/trial-mode).
 
-Other configuration entries can be found in `config/default.json` . The `numberMap` entry in particular is where you map your private numbers to the SignalWire DIDs you will use as your public number.
+Other configuration entries can be found in `config/default.json` . The `numberMap` entry in particular is where you map your private numbers to the SignalWire DIDs you will use as your public number. In the same JSON file, you can find and change the text for the greeting and the sound files in use. Make sure you restart the application after making configuration changes.
 
-Make sure you set up each DID in your SignalWire dashboard to use the Relay handler with the context you have in `.env`. The default is `captcha`.
+Make sure you set up the DID in your SignalWire dashboard to use the Relay handler with the context you have in `.env`. The default is `captcha`.
+
+You can find more information, including where to get your credentials and how to set up the phone number, in [the Getting Started with Relay](https://github.com/signalwire/signalwire-guides/blob/master/intros/getting_started_relay.md) guide.
 
 ## Running the application
 
 If you are running the application locally, first load  the `.env` file with `set -o allexport; source .env; set +o allexport`, then run `npm install` followed by `npm start`.
 
-It is simpler to run the application via Docker, by first building the image with `docker build -t nodelenny .` followed by `docker run -it --rm -v ``pwd``/.node-persist:/app/.node-persist --name nodelenny --env-file .env nodeivr`.
+It is simpler to run the application via Docker, by first building the image with `docker build -t nodelenny .` followed by `docker run -it --rm -v ``pwd``/.node-persist:/app/.node-persist --name nodelenny --env-file .env nodelenny`.
 
-## Documentation links
+If you prefer, you can just run `sh run_docker.sh` in your shell and the container will be built and started for you.
+
+## Testing it
+
+Give a call to the phone number you set up above and prepare for a simple math quiz... unless you are a robot!
+
+## Documentation and useful links
 
 [Relay Documentation](https://docs.signalwire.com/topics/relay/#relay-documentation)
 
 [Relay Docker Images](https://github.com/signalwire/signalwire-relay-docker)
+
+[Getting Started with Relay](https://github.com/signalwire/signalwire-guides/blob/master/intros/getting_started_relay.md)
 
 [SignalWire 101](https://signalwire.com/resources/getting-started/signalwire-101)
 
