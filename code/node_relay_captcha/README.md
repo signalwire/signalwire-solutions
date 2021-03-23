@@ -1,12 +1,14 @@
 # Lenny Spam Call Filter with Relay and Node.js
 
-This application implements a voice CAPTCHA to determine if the caller is a human. If they are, it forwards the call to your phone number.
+This application implements a call forwarding service with a voice CAPTCHA to determine if the caller is a human. If they are, it forwards the call to your phone number or the one you configured as the destination.
 
-In case it is a robo-call, it is sent straight to Lenny (more on that below), and it is flagged as a spammer if someone tries to answer the CAPTCHA three times and fails. If the caller solves the CAPTCHA, their call gets forwarded to the configured private phone number for the DID.
+A [CAPTCHA](https://en.wikipedia.org/wiki/CAPTCHA) is an automated mechanism used to determine if the user of a service is a human or a machine. You have certainly interacted with visual ones such as "pick all of the pictures with a boat in it" on websites. In this application, we ask the caller for the result of the sum of two random numbers.
 
-Once the calls are connected, the user that received the call on his private number can press `**` on his DTMF keypad and have the call instantly flagged as spammer and added to the database.
+In case the incoming call is determined to be a robo-call, it is sent straight to Lenny (more on that below), and it is flagged as a spammer if someone tries to answer the CAPTCHA three times and fails. If the caller solves the CAPTCHA, their call gets forwarded to the configured private phone number for the DID.
 
-The application uses [node-persist](https://github.com/simonlast/node-persist), a simple file-based database, to keep track of flagged numbers and automatically reject calls.
+Once the calls are connected, the user that received the call on his private number can press `**` on his DTMF keypad at any time and have the call instantly flagged as spammer and added to the database. That way, if a human unwanted caller makes it through the CAPTCHA, they can still be banned.
+
+The application uses [node-persist](https://github.com/simonlast/node-persist), a simple file-based database, to keep track of flagged numbers and automatically reject calls. In a production application, you would maybe use a different database such as PostgreSQL.
 
 ### What is Lenny?
 
