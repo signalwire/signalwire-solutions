@@ -195,45 +195,36 @@ end
 
 Looking at the Node.JS example in particular, we can see a few moving parts:
 
-We include the necessary class:
-
 ```js
+// We include the necessary class:
+
 const { RelayConsumer } = require('@signalwire/node')
-```
 
-We set up the consumer using the credentials from above. We also set ourselves up to wait for calls from the `office` context (more on that later).
-
-```js
+// We set up the consumer using the credentials from above. We also set ourselves up to wait for calls from the `office` context (more on that later).
 const consumer = new RelayConsumer({
   project: process.env.SIGNALWIRE_PROJECT_KEY,
   token: process.env.SIGNALWIRE_TOKEN,
   contexts: ['office'],
-```
 
-We use one of the available event handlers to set up logging. Relay consumers provide `setup`, `ready`, and `teardown` to handle your specific requirements.
+ // We use one of the available event handlers to set up logging. Relay consumers provide `setup`, `ready`, and `teardown` to handle your specific requirements.
 
-```js
   ready: async ({ client }) => {
     if (process.env.ENABLE_DEBUG) { 
       client.__logger.setLevel(client.__logger.levels.DEBUG)
     }
   },
-```
 
-We set up a specialized handler for controlling an incoming call.
+// We set up a specialized handler for controlling an incoming call.
 
-```js
   onIncomingCall: async (call) => {
     await call.answer()
     await call.playTTS({ text: 'Welcome to SignalWire!' });
     await call.hangup();
   }
 })
-```
 
-Finally, we just run the consumer.
+// Finally, we just run the consumer.
 
-```js
 consumer.run()
 ```
 
