@@ -60,3 +60,4 @@ bin
 vendor/
 __pycache__
 .node-persist
+config.json
