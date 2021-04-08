@@ -1,6 +1,6 @@
 # Multi-factor Authentication with SignalWire
 
-Multi-factor authentication (MFA) is used to authenticate users of an application through the use of a secret token that is sent to them over SMS text or a voice call. It is commonly used for logging in to secure systems, but it is also gaining popularity as an one-timepassowrd (OTP) mechanism to authorize transactions or to sign documents and contracts.
+Multi-factor authentication (MFA) is used to authenticate users of an application through the use of a secret token that is sent to them over SMS text or a voice call. It is commonly used for logging in to secure systems, but it is also gaining popularity as an one-time password (OTP) mechanism to authorize transactions or to sign documents and contracts.
 
 SignalWire's [multi-factor authentication API](https://docs.signalwire.com/topics/relay-rest/#resources-multi-factor-authentication) provides a simple and secure flow to request and verify tokens via REST HTTP calls.
 
@@ -27,7 +27,7 @@ If using SMS, you have the option of using SignalWire's outbound number which is
 To request a token via voice call, again supply a `to` parameter as the minimal payload to be sent in a CURL request to the `/api/relay/rest/mfa/call` endpoint.
 
 ```sh
-curl  https://your-space.signalwire.com/api/relay/rest/mfa/sms \
+curl  https://your-space.signalwire.com/api/relay/rest/mfa/call \
 -X POST \
   -u 'YourProjectID:YourAuthToken' \
   -H 'Content-Type: application/json' \
