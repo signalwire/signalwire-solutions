@@ -54,6 +54,154 @@ If you prefer, you can just run `sh run_docker.sh` in your shell and the contain
 
 Give a call to the phone number you set up above and prepare for a simple math quiz... unless you are a robot!
 
+## Application code
+
+Let's now take a look at the more interesting code snippets. The full application code is available in [our repo](https://github.com/signalwire/signalwire-guides/tree/master/code/node_relay_captcha).
+
+### The CAPTCHA loop
+
+The following code snippet is what implements the voice CAPTCHA, asking the caller for the result of a simple sum.
+
+```js
+async function captcha(call) {
+  var tries = CONFIG.general.captchaTries;
+  var loops = 3;
+
+  // activate the SignalWire denoiser
+  var hints = ["denoise=true"];
+
+  // add all possible answers to hints so it is more likely to hear numbers
+  for (i = 0; i <= 20; i++) {
+    hints.push(i);
+  }
+
+  var collect_params = {
+    type: 'both',
+    digits_max: 2,
+    digit_timeout: 1.0,
+    digits_terminators: '#',
+    end_silence_timeout: 1.0,
+    speech_hints: hints,
+    media: [{
+      type: 'tts',
+      text: "",
+      language: CONFIG.tts.lang,
+      gender: CONFIG.tts.gender
+    }]
+  }
+
+  var msg = CONFIG.general.introMessage + ", powered by SignalWire: ";
+
+  await call.tts(msg);
+
+  while (call.active && call.db.scammer == false && tries > 0 && loops > 0) {
+    var rand1 = Math.random() * 10 + 1 << 0
+    var rand2 = Math.random() * 10 + 1 << 0
+    var answer = rand1 + rand2
+
+    loops--;
+    // ask the question
+    collect_params.media[0].text = "What is " + rand1 + " plus " + rand2 + '?';;
+    const result = await call.prompt(collect_params)
+
+    if (result && result.successful) {
+      console.log("heard " + result.result);
+
+      var regex = new RegExp(answer, 'g');
+
+      // using a regex is more effective and tolerant of possible ASR results
+      if (result.result.match(regex)) {
+        await call.tts(CONFIG.general.humanMessage);
+        call.db.human = true;
+        call.db.scammer = false;
+        break;
+      } else {
+        tries--;
+        if (tries == 0) {
+          // you failed! probably a robo-call - or someone who can't count
+          call.db.scammer = true;
+          call.db.human = false;
+          break;
+        } else {
+          await call.tts(CONFIG.general.wrongAnswerMessage + " " + "I will give you " +
+            tries + " more " + (tries > 1 ? "tries" : "try"));
+        }
+      }
+    } else if (result) {
+      console.error("Bad result");
+      await call.tts(CONFIG.general.missedDetectionMessage);
+    }
+  }
+
+  return true;
+}
+```
+
+### The in-call detection
+
+This part of the application uses RELAY asynchronous methods to detect if a `**` sequence has been pressed by the user while the call is active. If that happens, it means someone went through the CAPTCHA but is still someone we would rather not speak to.
+
+```js
+async function completeCall(call) {
+  // call "our" number, since the caller did complete the CAPTCHA correctly
+  var dial = await call.connect({
+    type: 'phone',
+    to: CONFIG.numberMap[call.to],
+    from: call.from,
+    timeout: 30
+  });
+
+  if (dial.successful) {
+    console.log("Waiting for call to end");
+
+    dial.call.dialed = [];
+    dial.call.digitParser = function(digit) {
+      var self = dial.call;
+
+      self.dialed.push(digit);
+      while (self.dialed.length > 2) {
+        self.dialed.shift();
+      }
+      if (self.dialed.length == 2) {
+        var str = self.dialed.join("");
+        console.log("code", str);
+
+        if (str === "**") {
+          // banish the spammer to the shadow realm of Lenny
+          call.db.scammer = true;
+          call.db.human = false;
+          self.hangup();
+        }
+      }
+    }
+
+    // wait for any detection event. This could be used to implement more complex in-call apps
+    dial.call.on('detect.update', (call, params) => {
+      if (params.detect.type === "digit") {
+        dial.call.digitParser(params.detect.params.event);
+      }
+    });
+
+    const detectAction = await dial.call.detectAsync({
+      type: "digit",
+      timeout: 0
+    });
+
+    await dial.call.waitForEnded();
+    console.log("Call has ended");
+  } else {
+    console.log("Call has failed");
+    await call.tts(CONFIG.general.callFailureMessage);
+  }
+
+  if (!call.db.scammer) {
+    await call.hangup();
+  }
+
+  return true;
+}
+```
+
 ## Documentation and useful links
 
 [Relay Documentation](https://docs.signalwire.com/topics/relay/#relay-documentation)
