@@ -14,7 +14,7 @@
       </form>
       <%- if @success != nil %>
       <div>
-        Result: <%- if @success %> <span class="badge bg-success rounded-pill">Verified!</span> <% else %> <span class="badge bg-danger rounded-pill">Failed!</span> <% end %>
+        Result: <% if @success %> <span class="badge bg-success rounded-pill">Verified!</span> <% else %> <span class="badge bg-danger rounded-pill">Failed!</span> <% end %>
       </div>
       <% end %>
     </div>

@@ -6,16 +6,6 @@ require 'uri'
 require 'json'
 require "sinatra/reloader" if development?
 
-def place_call(to_number)
-  client = Signalwire::REST::Client.new ENV['SIGNALWIRE_PROJECT_KEY'], ENV['SIGNALWIRE_TOKEN'], signalwire_space_url: ENV['SIGNALWIRE_SPACE']
-
-  call = client.calls.create(
-    url: ENV['APP_DOMAIN'] + '/join',
-    to: to_number,
-    from: ENV['FROM_NUMBER']
-  )
-end
-
 def make_request(action, payload)
   uri = URI.parse("https://#{ENV['SIGNALWIRE_SPACE']}/api/relay/rest/mfa#{action}")
 
