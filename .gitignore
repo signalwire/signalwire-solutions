@@ -58,3 +58,6 @@ bin
 .env
 .bundle
 vendor/
+__pycache__
+.node-persist
+config.json

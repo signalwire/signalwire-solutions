@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  web:
+    build:
+      context: .
+    image: relayruby
+    env_file: .env
+    command: bundle exec ruby app.rb
+    ports:
+      - "4567:4567"
+
+  relay:
+    image: relayruby
+    env_file: .env
+    command: bundle exec ruby consumer.rb

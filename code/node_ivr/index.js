@@ -2,7 +2,6 @@ const express = require("express");
 const { RestClient } = require('@signalwire/node')
 
 // get environment variables ////
-const DOMAIN = process.env.DOMAIN; // the domain the app is deployed at
 const PRIMARY_SALES = process.env.PRIMARY_SALES; // phone number for option 1
 const SECONDARY_SALES = process.env.SECONDARY_SALES; // secondary phone number for option 1
 const RECRUITERS_GROUP = process.env.RECRUITERS_GROUP; // comma separated list of numbers for option 2 (eg. +15556677888,+15559998877)
@@ -10,19 +9,17 @@ const ACCOUNTING_GROUP = process.env.ACCOUNTING_GROUP// phone number for option 
 const JOBS_EMAIL = process.env.JOBS_EMAIL; // email for voicemail option 2
 const ACCOUNT_EMAIL = process.env.ACCOUNT_EMAIL; // email for voicemail option 4
 
-const EMAIL_FROM = process.env.EMAIL_FROM || 'SignalWire Sample App <me@samples.mailgun.org>';
-const EMAIL_RECRUITERS = process.env.EMAIL_RECRUITERS || 'recruiters@example.org';
-const EMAIL_RECRUITERS = process.env.EMAIL_RECRUITERS || 'recruiters@example.org';
+const EMAIL_FROM = process.env.EMAIL_FROM || 'SignalWire Sample App <me@samples.mailgun.org>'
 
-const MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN; // get this from your Mailgun account
-var mg = require('mailgun-js')({apiKey: process.env.MAILGUN_API_KEY, domain: MAILGUN_DOMAIN});
+// const MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN; // get this from your Mailgun account
+// var mg = require('mailgun-js')({apiKey: process.env.MAILGUN_API_KEY, domain: MAILGUN_DOMAIN});
 
 var RECORDING_DB = {};
 
 
 // methods should be in a different file in production ////
 function formatUrl(action, querystring = '') {
-  return "https://" + DOMAIN + "/" + action + querystring;
+  return "/" + action + querystring;
 }
 
 function respondAndLog(res, response) {
@@ -53,7 +50,7 @@ app.listen(process.env.PORT || 3000, () => {
 });
 
 // app routes ////
-app.get("/status", (req, res, next) => {
+app.get("/", (req, res, next) => {
   res.send("Sample IVR")
 });
 
@@ -71,14 +68,15 @@ app.post("/mainmenu", (req, res, next) => {
 
   switch (req.body.Digits) {
     case "2":
-      dial = response.dial({timeout: 20, action: formatUrl('voicemail', "?Email=" + JOBS_EMAIL + "&Message=http://swarmfly.com/TF-6.wav")});
+      dial = response.dial({timeout: 20, action: formatUrl('voicemail', "?Email=" + JOBS_EMAIL + "&Message=Recruiting")});
       var recruiters = RECRUITERS_GROUP.split(',')
+      // this makes it so the recruiters are dialed all at the same time, first one to pick up wins
       recruiters.forEach(function(item) {
         dial.number(item);
       });
       break;
     case "4":
-      dial = response.dial({timeout: 20, action: formatUrl('voicemail', "?Email=" + ACCOUNT_EMAIL + "&Message=http://swarmfly.com/TF-7.wav")});
+      dial = response.dial({timeout: 20, action: formatUrl('voicemail', "?Email=" + ACCOUNT_EMAIL + "&Message=Accounting")});
       dial.number(ACCOUNTING_GROUP);
       break;
     default:
@@ -102,12 +100,10 @@ app.post("/primarysalesdial", (req, res, next) => {
 });
 
 app.post("/voicemail", (req, res, next) => {
-  console.log(req.body);
-  console.log(req.query);
   var response = new RestClient.LaML.VoiceResponse();
   if (req.body.DialCallStatus != "completed") {
     // it means the call was not answered
-    response.play(req.query.Message)
+    response.say("Our " + req.query.Message + " department is currently unavailable. Please leave a message after the beep.")
     action = formatUrl('voicemailhandler', "?Email=" + req.query.Email)
     response.record({transcribe: true, transcribeCallback: action, action: action })
   }
