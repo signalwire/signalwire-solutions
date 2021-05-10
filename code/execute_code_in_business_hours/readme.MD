@@ -34,6 +34,12 @@ def offBusinessHours():
     response.append(dial)
     return response.to_xml()
  ```
+ 
+ The corresponding LaML for the open route (identical to the closing route save for the number) looks like this: 
+```xml
+<?xml version="1.0" encoding="UTF-8"?><Response><Dial record="true"><Number>+12342556182</Number></Dial></Response>
+```
+
  Next, we need to create a route that will respond to incoming calls and check the current time. We instantiate `VoiceResponse()` first just as we did in the previous route. We will define the timezone here as `US/Eastern`, however, you can change this timezone to whichever one you prefer. You can view the list of Pytz timezones here: [https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568)
  
 We can use `datetime.now()` to get a datetime object at the time of the call, and use `tz` as the argument to make sure it's the correct time zone. 
@@ -67,6 +73,12 @@ def checkTime():
         print("That means we're closed!")
 
     return response.to_xml()
+```
+
+The corresponding LaML for the above route is very simple - it's only a redirect to the `/open` route. 
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?><Response><Redirect>/open</Redirect></Response>
 ```
 
 Finally, we run the application:
