@@ -133,13 +133,13 @@ We need to do the exact same thing with the functions `choose_salesman()` and `c
 # take chosen salespersons name and point to their SignalWire line
 def choose_salesman(args):
     switcher = {
-        "alice": '+1xxxxxxxxxx',
+        "alice": '+12342186054',
 
-        "bob": '+1xxxxxxxxxx',
+        "bob": '+12342186054',
 
-        "charlie": '+1xxxxxxxxxx',
+        "charlie": '+12342186054',
 
-        "general": '+1xxxxxxxxxx',
+        "general": '+12342186054',
     }
     errorOccurred = "An error occurred. We could not route to the correct agent. Please record a message with detailed " \
                     "information and we will get back to you as soon as possible. "
@@ -149,11 +149,11 @@ def choose_salesman(args):
 # take chosen support department and point to their SignalWire line
 def choose_support(args):
     switcher = {
-        "cloud_support": '+1xxxxxxxxxx',
+        "cloud_support": '+12342186054',
 
-        "stack_support": '+1xxxxxxxxxx',
+        "stack_support": '+12342186054',
 
-        "work_support": '+1xxxxxxxxxx',
+        "work_support": '+12342186054',
 
     }
     errorOccurred = "An error occurred. We could not route to the correct agent. Please record a message with detailed " \
