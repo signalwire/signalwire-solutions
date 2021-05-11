@@ -3,17 +3,12 @@ const { RestClient } = require('@signalwire/node')
 exports.helloLaml = (req, res) => {
   const response = new RestClient.LaML.VoiceResponse();
   try {
-    var from_num = req.body.From.split('@')[0].replace('sip:', '');
-    
-
-    if (from_num.match(/\+\d{11}/)) {
-      dial = response.dial({timeout: 30, callerID: from_num});
-      dial.number(req.body.SipUser);
+    var d = new Date();
+    if (d.getDay() == 0) {
+      response.say('Happy Sunday! Our store is closed today');
     } else {
-      response.hangup
+      response.say('Hello! Our store is open from 9 to 6 today.');
     }
-
-    console.log(response.toString());
   } catch(err) {
     console.log(err.message);
   } finally {

@@ -161,6 +161,15 @@ def choose_support(args):
     return switcher.get(args, errorOccurred)
 ```
 
+You will need to replace the phone numbers above with the correct phone number for each agent or department. However, for the sake of testing easily, you can always use a SignalWire DID with the incoming call handling webhook pointed at a LaML Bin containing the LaML below. This will simulate if the agent/department was busy and therefore unable to answer the phone, so you will redirect to the appropriate voicemail instead. 
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Reject reason="busy" />
+</Response>
+```
+
+
 With these functions defined, we can now begin going through the 7 different routes. The first route `/get_menu` accepts web requests from GET or POST. We first need to create an instance of `VoiceResponse()` called `response`. Next, we open `menus.json` and load it as menus. We check to see if there is already a default menu specified, and if not, we route it to the main menu. Next we need to read the `input_type` to determine if the user pressed any digits. If digits were pressed, we need to request the value of the digits pressed and use that to redirect to the correct next menu. If no digits were pressed yet, we will present the menu and loop through the options listed. Lastly, we need to add the menu to `response` and return `str(response`. 
 
 ```python

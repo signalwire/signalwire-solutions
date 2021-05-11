@@ -1,0 +1,7 @@
+<h3>Number Mappings</h3>
+<dl>
+  <% @config["mappings"].each do |v| %>
+    <dt>From: <%= v[0] %></dt>
+    <dd>To: <%= v[1] %></dd>
+  <% end %>
+</dl>
