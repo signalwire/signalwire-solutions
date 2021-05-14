@@ -42,6 +42,8 @@ If you would like to test it with friends and colleagues, we recommend [ngrok](h
 
 On the server side, we have methods to create a room and retrieve a token to access it. Each of your users needs a separate token.
 
+You can find the complete application [here](https://github.com/signalwire/signalwire-guides/tree/master/code/simple_video_example), but what follows is an abstract of how we create a token in Ruby, then how we access the room in the browser.
+
 ```ruby
 # Request a token with simple capabilities
 def request_token(room, user = nil)
