@@ -2,7 +2,7 @@
 
 SignalWire's roots have always been in video communications, as our founder Anthony Minessale founded the FreeSWITCH project, one of the most popular open source media servers in the world.
 
-Today, we want to gring that experience and that power to new market with a new release that makes it easy to implement video communication solutions based on the SignalWire platform.
+Today, we want to bring that experience and that power to new market with a new release that makes it easy to implement video communication solutions based on the SignalWire platform.
 
 Our demo is a very simple application that will generate a random user name and room, unless you pass them in via GET using respectively the `user` and `room` parameters.
 
