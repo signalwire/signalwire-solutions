@@ -7,7 +7,7 @@ client = signalwire_client("YourProjectID", "YourAuthToken", signalwire_space_ur
 #This creates a global variable for the phone number you wish to log calls and messages from.
 phone_number = 'YourPhoneNumber'
 
-#This creates a call via a webhook to the phone number in question.
+#This creates a call via a webhook to the phone number in question. When you execute the rest of this code, you will see this call populated in the log.
 call = client.calls.create(
     url = 'https://your-application.com/docs/voice.xml'
     to = phone_number
@@ -21,7 +21,7 @@ data = []
 for record in messages:
     data.append((record.from_, record.to, record.body, record.date_sent, record.status, record.sid))
 
-#This takes the calls from a given phone number and turns them into a list. If you wish to log every phone number, simply leave the parentheses blank.
+#This takes the calls from a given phone number and adds them to the previously created list list. If you wish to log every phone number, simply leave the parentheses blank.
 calls = client.calls.list(from_ = phone_number)
 for record in calls:
     data.append((record.from_, record.to, record.body, record.date_sent, record.status, record.sid))
