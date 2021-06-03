@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Video Conferencing</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://cdn.signalwire.com/libs/js/signalwire/signalwire-alpha-preview-2.js"></script>
+  <script type="text/javascript" src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <style>
+    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+    .row.content {height: 550px}
+
+    /* Set gray background color and 100% height */
+    .sidenav {
+
+       background-color: #9dbcd4;
+      height: 100%;
+      min-height: calc(100vh - 50px);
+    }
+
+    .jumbotron {
+
+    background-color: #f1f1f1;
+    margin-bottom: 0px;
+    }
+
+    .btn-toolbar{
+  text-align: center;
+  margin-left: 10px;
+  }
+
+    /* On small screens, set height to 'auto' for the grid */
+    @media screen and (max-width: 767px) {
+      .row.content {height: auto;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="jumbotron">
+  <div class="container-fluid text-center">
+    <h1><img src="{{ logo }}" alt="SignalWire Logo" class="float-left" width="200" height="200">Video API Conferencing with SignalWire</h1>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <div class="row content">
+    <div class="col-sm-3 sidenav hidden-xs">
+      <h3>Room Information</h3>
+      <ul class="nav nav-pills nav-stacked">
+        <li>Room Number: {{room}}</li>
+        <li>Show Room URL Here</li>
+      </ul>
+       <h3>User Information</h3>
+      <ul class="nav nav-pills nav-stacked">
+        <li>User Number: {{user}}</li>
+        <li>List Participants Here </li>
+      </ul>
+    </div>
+    <div class="col-sm-6 text-center">
+      <h3>Your Feed</h3>
+      <div id="rootElement" style="height:500px; width:500px;"></div>
+      <div class="btn-toolbar w-100" role="group">
+        <button id="muteSelfBtn" class="btn btn-primary btn-lg active px-3 mt-2 d-none" onClick="muteSelf()" aria-pressed="true" >Mute Mic</button>
+        <button id="unmuteSelfBtn" class="btn btn-primary btn-lg active px-3 mt-2 d-none" onClick="unmuteSelf()" aria-pressed="true" >UnMute Mic</button>
+        <button id="muteVideoSelfBtn" class="btn btn-primary btn-lg active px-3 mt-2 d-none" onClick="muteVideoSelf()" aria-pressed="true" >Mute Video</button>
+        <button id="unmuteVideoSelfBtn" class="btn btn-primary btn-lg active px-3 mt-2 d-none" onClick="unmuteVideoSelf()" aria-pressed="true" >Unmute Video</button>
+      </div>
+    </div>
+
+
+<script type="text/javascript">
+    var client;
+    var rtcSession = null;
+
+    var host = "{{space}}";
+    var token = "{{token}}";
+
+    const muteButtons = [
+      muteSelfBtn,
+      unmuteSelfBtn,
+      muteVideoSelfBtn,
+      unmuteVideoSelfBtn
+    ]
+
+    ready(function() {
+      connect();
+    });
+
+    function connect() {
+      VideoSDK.createRTCSession({
+        host: host,
+        token: token,
+        rootElementId: 'rootElement',
+        audio: 'true',
+        video: 'true',
+      }).then(rtc => {
+
+        rtcSession = rtc
+
+        console.debug('Video SDK room', rtcSession)
+
+        rtcSession.on('destroy', (params) => {
+          hangup()
+        })
+
+      rtcSession.on('room.started', (params) =>
+        console.debug('>> DEMO room.started', params)
+      )
+      rtcSession.on('room.subscribed', (params) => {
+        console.debug('>> DEMO room.subscribed', params)
+
+
+        muteButtons.forEach(button => {
+          button.classList.remove('d-none');
+          button.disabled = false;
+        })
+      })
+      rtcSession.on('room.updated', (params) =>
+        console.debug('>> DEMO room.updated', params)
+      )
+      rtcSession.on('room.ended', (params) => {
+        console.debug('>> DEMO room.ended', params)
+        hangup()
+      })
+      rtcSession.on('member.joined', (params) =>
+        console.debug('>> DEMO member.joined', params)
+      )
+      rtcSession.on('member.updated', (params) =>
+        console.debug('>> DEMO member.updated', params)
+      )
+      rtcSession.on('member.left', (params) =>
+        console.debug('>> DEMO member.left', params)
+      )
+      rtcSession.on('layout.changed', (params) =>
+        console.debug('>> DEMO layout.changed', params)
+      )
+      rtcSession.on('track', (event) =>
+        console.debug('>> DEMO track', event)
+      )
+
+      rtcSession.join()
+    })
+  }
+
+  function hangup() {
+    if (rtcSession) {
+      rtcSession.hangup()
+    }
+
+    muteButtons.forEach(button => {
+      button.classList.add('d-none');
+      button.disabled = true;
+    })
+  }
+
+  // jQuery document.ready equivalent
+  function ready(callback) {
+    if (document.readyState != 'loading') {
+      callback();
+    } else if (document.addEventListener) {
+      document.addEventListener('DOMContentLoaded', callback);
+    } else {
+      document.attachEvent('onreadystatechange', function() {
+        if (document.readyState != 'loading') {
+          callback();
+        }
+      });
+    }
+  }
+
+  function muteAll() {
+    rtcSession.audioMute('all')
+  }
+
+  function unmuteAll() {
+    rtcSession.audioUnmute('all')
+  }
+
+  function muteSelf() {
+    rtcSession.audioMute(rtcSession.memberId)
+  }
+
+  function unmuteSelf() {
+    rtcSession.audioUnmute(rtcSession.memberId)
+  }
+
+  function muteVideoAll() {
+    rtcSession.videoMute('all')
+  }
+
+  function unmuteVideoAll() {
+    rtcSession.videoUnmute('all')
+  }
+
+  function muteVideoSelf() {
+    rtcSession.videoMute(rtcSession.memberId)
+  }
+
+  function unmuteVideoSelf() {
+    rtcSession.videoUnmute(rtcSession.memberId)
+  }
+</script>
+
+</body>
+</html>
+
