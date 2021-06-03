@@ -1,4 +1,4 @@
-<script src="https://cdn.signalwire.com/libs/js/signalwire/signalwire-alpha-preview-2.js"></script>
+<script src="https://cdn.signalwire.com/libs/js/signalwire/signalwire-alpha-preview-3.js"></script>
 <script type="text/javascript" src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
 
 <div class="container">
@@ -51,7 +51,7 @@
      * Connect with Relay creating a client and attaching all the event handler.
     */
     function connect() {
-      VideoSDK.createRTCSession({
+      SignalWire.Video.createRTCSession({
         host: host, // allow switch between staging and production
         token: token,
         rootElementId: 'rootElement',
