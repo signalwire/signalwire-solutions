@@ -7,10 +7,7 @@ COPY package*.json ./
 RUN npm install
 
 # Bundle app source
-COPY index.js ./
-COPY frontend ./
-copy .env ./
-
-EXPOSE 4000
+COPY index.js .
+COPY frontend .
 
 CMD [ "npm", "start" ]
