@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>VIDEOCALL</title>
+    <link rel="stylesheet" href="/index.css" />
+
+    <!-- Import Axios library (You can use the Fetch API if you like) -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Import SignalWire library -->
+    <script src="https://cdn.signalwire.com/libs/js/signalwire/signalwire-alpha-preview-3.js"></script>
+  </head>
+
+  <body>
+    <div id="getusername">
+      Step one<br /><br />
+      <form onsubmit="event.preventDefault(); joinwithusername();">
+        <input
+          type="text"
+          id="usernameinput"
+          placeholder="Enter your username"
+        />
+        <input type="submit" value="Join" />
+      </form>
+    </div>
+
+    <div id="videoroom">
+      Step two<br />
+      Try joining this page from another tab to witness the magic. <br />
+      <div id="root"><!-- Video SDK will inject the video stream here --></div>
+      <div id="events"></div>
+      <button onclick="hangup()">Hang up</button>
+    </div>
+
+    <div id="loading">Loading ...</div>
+
+    <script src="index.js"></script>
+  </body>
+</html>
