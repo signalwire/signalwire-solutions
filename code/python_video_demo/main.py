@@ -56,6 +56,7 @@ def request_moderator_token(room, user=None):
                    "room.member.audio_unmute",
                    "room.member.video_mute",
                    "room.member.video_unmute",
+                   "room.member.remove",
                    ]
     payload['permissions'] = permissions
     result = handle_http(payload, 'room_tokens')
@@ -98,7 +99,7 @@ def assignMod():
     moderatorToken = request_moderator_token(room, user)
 
     return render_template('mod.html', room=room, user=user, token=moderatorToken, logo='/static/translogo.png',
-                           space=SIGNALWIRE_HOST, userType=userType)
+                           host=SIGNALWIRE_HOST, userType=userType)
 
 
 # assign guest role - no ability to control other users
@@ -124,9 +125,8 @@ def assignGuest():
     guestToken = request_guest_token(room, user)
 
     return render_template('guest.html', room=room, user=user, token=guestToken, logo='/static/translogo.png',
-                           space=SIGNALWIRE_HOST, userType=userType)
+                           host=SIGNALWIRE_HOST, userType=userType)
 
 
 if __name__ == "__main__":
     app.run(debug=True)
-

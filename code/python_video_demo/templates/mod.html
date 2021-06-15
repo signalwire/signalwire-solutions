@@ -54,18 +54,15 @@
 <div class="container-fluid">
   <div class="row content">
     <div class="col-sm-3 sidenav hidden-xs">
-      <h3>SignalWire Work</h3>
+      <h3>User/Room Settings</h3>
       <ul class="nav nav-pills nav-stacked">
         <li>Current Room: {{room}}</li>
         <li>Current User: {{user}}</li>
         <li>User Permissions: {{userType}}</li>
-        <li>------------------------------</li>
-        <li class="no-bullet">
-          <button id="listParticipants" class="btn btn-primary btn-md active px-3 mt-2 d-none" onClick="listParticipants()" aria-pressed="true" >List Participants</button>
-        </li>
-        <li id="app">
-
-        </li>
+        </ul>
+      <h3>Current Participants</h3>
+      <ul class="nav nav-pills nav-stacked">
+        <li id="app"></li>
       </ul>
     </div>
     <div class="col-sm-9 justify-content-center">
@@ -123,6 +120,7 @@
           hangup()
         })
 
+
       rtcSession.on('room.started', (params) =>
         console.debug('>> DEMO room.started', params)
       )
@@ -130,21 +128,30 @@
       // Add members to participantList if they don't already exist
       rtcSession.on('room.joined', (params) => {
         console.debug('>> DEMO room.joined', params)
+        console.log('Room Joined...')
 
         var i;
-        for (i=0; i < params.room.members.length; i++) {
-          participantList.indexOf(params.room.members[i].id) === -1 ? participantList.push(params.room.members[i].id) :
-          console.log("This item already exists");
-        }
 
-        console.log("Participant List is:");
-        console.log(participantList);
+        for (i=0; i < params.room.members.length; i++) {
+          if (participantList[params.room.members[i].id]){
+            console.log('User already exists');
+          }
+          else {
+            var participantListObj = {userId: params.room.members[i].id, userName: params.room.members[i].name};
+            let partObj={};
+            partObj[participantListObj.userId]=participantListObj;
+            participantList.push(partObj)
+
+          }};
+
+        listParticipants();
 
         muteButtons.forEach(button => {
           button.classList.remove('d-none');
           button.disabled = false;
         })
       })
+
 
       rtcSession.on('room.updated', (params) =>
         console.debug('>> DEMO room.updated', params)
@@ -159,16 +166,26 @@
       rtcSession.on('member.joined', (params) => {
         console.debug('>> DEMO member.joined', params)
 
-        if (participantList.indexOf(params.member.id) === -1) {
-          participantList.push(params.member.id)
-        }
-        else{
-          console.log("This item already exists");
-        }
+        if (participantList[params.member.id]) {
+            console.log('User already exists');
+          }
+        else {
+            var participantListObj = {userId: params.member.id, userName: params.member.name};
+            console.log("Participant list object is: ");
+            console.log(participantListObj);
+            let partObj={};
+            partObj[participantListObj.userId]=participantListObj;
+            console.log("Participant list object is: ");
+            console.log(participantListObj);
+            participantList.push(partObj)
+          };
 
-        console.log('Member Joined');
-        console.log('Current Participant List:');
+
+        console.log('Member Joined...');
+        console.log('Updated Participant List:');
         console.log(participantList);
+
+        listParticipants();
 
       })
 
@@ -178,11 +195,13 @@
 
       // remove member from participant list
       rtcSession.on('member.left', (params) => {
-        console.debug('>> DEMO member.left', params)
-        participantList.pop(params.member.id)
+        console.debug('>> DEMO member.left', params);
+        participantList.pop(params.member.id);
+
         console.log('Member Left');
-        console.log('Current Participant List:');
+        console.log('Updated Participant List...');
         console.log(participantList);
+        listParticipants();
       })
 
       rtcSession.on('layout.changed', (params) =>
@@ -193,13 +212,13 @@
         console.debug('>> DEMO track', event)
       )
 
-      rtcSession.join()
+      rtcSession.join();
     })
   }
 
   function hangup() {
     if (rtcSession) {
-      rtcSession.hangup()
+      rtcSession.hangup();
     }
 
     muteButtons.forEach(button => {
@@ -225,64 +244,119 @@
 
   // list all current room participants
   function listParticipants() {
-    console.log(participantList)
+    console.log('Listing Participants...');
+    console.log(participantList);
+
     var list = document.createElement('ul');
     var app = document.querySelector('#app');
     app.textContent = '';
 
 
-    participantList.forEach(function (participant) {
-	  var li = document.createElement('li');
-	  li.textContent = participant;
-	  list.appendChild(li);
-    });
-    console.log(list);
+    participantList.forEach(function(elem) {
+      let sid = Object.keys(elem)[0]
+      var userId = elem[sid].userId;
 
+      var li = document.createElement('li');
+      li.textContent = elem[sid].userName + " : " + elem[sid].userId;
+
+      var videoMuteBtn = document.createElement('BUTTON');
+      videoMuteBtn.innerText = "Mute Video";
+      videoMuteBtn.onclick = () => { videoMuteMember(userId); }
+
+      var videoUnmuteBtn = document.createElement('BUTTON');
+      videoUnmuteBtn.innerText = "Unmute Video";
+      videoUnmuteBtn.onclick = () => { videoUnmuteMember(userId); }
+
+      var MuteBtn = document.createElement('BUTTON');
+      MuteBtn.innerText = "Mute Audio";
+      MuteBtn.onclick = () => { muteMember(userId); }
+
+      var UnmuteBtn = document.createElement('BUTTON');
+      UnmuteBtn.innerText = "UnMute Audio";
+      UnmuteBtn.onclick = () => { UnmuteMember(userId); }
+
+      var kickBtn = document.createElement('BUTTON');
+      kickBtn.innerText = "Kick User";
+      kickBtn.onclick = () => { kickUser(userId); }
+
+      list.appendChild(li);
+      list.appendChild(videoMuteBtn);
+      list.appendChild(videoUnmuteBtn);
+      list.appendChild(MuteBtn);
+      list.appendChild(UnmuteBtn);
+      list.appendChild(kickBtn);
+
+    });
 
     app.appendChild(list);
-
-
-  }
+}
 
   // mute audio for all users
   function muteAll() {
-    rtcSession.audioMute({memberId: 'all'})
+    rtcSession.audioMute({memberId: 'all'});
   }
 
   // unmute audio for all users
   function unmuteAll() {
-    rtcSession.audioUnmute({memberId: 'all'})
+    rtcSession.audioUnmute({memberId: 'all'});
   }
 
   // mute your own audio
   function muteSelf() {
-    rtcSession.audioMute(rtcSession.memberId)
+    rtcSession.audioMute(rtcSession.memberId);
   }
 
   // unmute your audio
   function unmuteSelf() {
-    rtcSession.audioUnmute(rtcSession.memberId)
+    rtcSession.audioUnmute(rtcSession.memberId);
   }
 
   // mute video for all users
   function muteVideoAll() {
-    rtcSession.videoMute({memberId: 'all'})
+    rtcSession.videoMute({memberId: 'all'});
   }
 
   // unmute video for all users
   function unmuteVideoAll() {
-    rtcSession.videoUnmute({memberId: 'all'})
+    rtcSession.videoUnmute({memberId: 'all'});
   }
 
   // mute your video
   function muteVideoSelf() {
-    rtcSession.videoMute(rtcSession.memberId)
+    rtcSession.videoMute(rtcSession.memberId);
   }
 
   // unmute your video
   function unmuteVideoSelf() {
-    rtcSession.videoUnmute(rtcSession.memberId)
+    rtcSession.videoUnmute(rtcSession.memberId);
   }
+
+  // mute another member's video based on their user ID
+  function videoMuteMember(id) {
+    rtcSession.videoMute({memberId: id});
+    console.log("Video Mute Member Pressed");
+  }
+
+  // unmute another member's video based on their user ID
+  function videoUnmuteMember(id) {
+    rtcSession.videoUnmute({memberId: id});
+  }
+
+  // mute another member's audio based on their user ID
+  function muteMember(id) {
+    rtcSession.audioMute({memberId: id});
+  }
+
+  // unmute another member's audio based on their user ID
+  function unmuteMember(id) {
+    rtcSession.audioUnmute({memberId: id});
+  }
+
+  // remove a user from the room based on user ID
+  function kickUser(id){
+    rtcSession.removeMember({memberId: id});
+  }
+
 </script>
 </body>
 </html>
