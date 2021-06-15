@@ -3,12 +3,13 @@ import requests
 import json
 import random
 from requests.auth import HTTPBasicAuth
+import os
 
 app = Flask(__name__)
 
-SIGNALWIRE_PROJECT_KEY = '597f1e39-9fde-47d9-a76a-217ec0e5c8e7'
-SIGNALWIRE_TOKEN = 'PT5123f69961b8fa8992f0fb79d4d6c150ce0f18da0c3f671e'
-SIGNALWIRE_SPACE = 'bowl-test.signalwire.com'
+SIGNALWIRE_PROJECT_KEY = os.environ['SIGNALWIRE_PROJECT_KEY'];
+SIGNALWIRE_TOKEN = os.environ['SIGNALWIRE_TOKEN'];
+SIGNALWIRE_SPACE = os.environ['SIGNALWIRE_SPACE'];
 SIGNALWIRE_HOST = 'relay.signalwire.com'
 
 

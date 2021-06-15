@@ -22,15 +22,14 @@ Beta documentation is [here](https://docs.signalwire.com/topics/api/) and will b
 
 ## Configuring the code
 
-You will need to start by replacing the variables with the ones that match your account.
+Start by copying the env.example file to a file named .env, and fill in the necessary information.
 
-The application needs a SignalWire API token. You can sign up [here](https://signalwire.com/signup), then put the Project ID as `SIGNALWIRE_PROJECT_KEY`, Auth Token as `SIGNALWIRE_TOKEN`, and SignalWire Space URL as `SIGNALWIRE_SPACE`. You can see an example of this in the script below with made up values. `SIGNALWIRE_HOST` stays the same, pointed towards 'relay.signalwire.com'.
+The application needs a SignalWire API token. You can sign up [here](https://signalwire.com/signup), then update the .env file with the Project ID as `SIGNALWIRE_PROJECT_KEY`, Auth Token as `SIGNALWIRE_TOKEN`, and SignalWire Space URL as `SIGNALWIRE_SPACE`. You can see an example of this in the script below with made up values.
 
 ```
 SIGNALWIRE_PROJECT_KEY = '7dafyd8fsd-adfhsdj7asdhdf-fhsdkjs'
 SIGNALWIRE_TOKEN = 'PTsjdfsh123hkjdshdfs'
 SIGNALWIRE_SPACE = 'example.signalwire.com'
-SIGNALWIRE_HOST = 'relay.signalwire.com'
 ```
 
 If you sign up for the first time, your account will be start in trial mode, which you can exit by making a manual top up of $5.00. You can find more information [on the Trial Mode resource page](https://signalwire.com/resources/getting-started/trial-mode).
@@ -39,7 +38,7 @@ If you sign up for the first time, your account will be start in trial mode, whi
 
 First, we need to set up the server side code to create a room and retrieve a token for accessing it. We will need a function for handling http requests, a function to request a guest token (non moderator privlidges), a function to request a moderator token, and a function to create a room. We will need a route that when accessed gives users a moderator token as well as a separate route that gives users a guest token.
 
-We start with the necessary imports and assign values to our required variables. Do not make any changes to `SIGNALWIRE_HOST`, that is already set to the value that it needs to be!
+We start with the necessary imports and assign values from our `.env` file to our required variables. Do not make any changes to `SIGNALWIRE_HOST`, that is already set to the value that it needs to be!
 
 ```python
 from flask import Flask, request, render_template, jsonify
@@ -47,12 +46,13 @@ import requests
 import json
 import random
 from requests.auth import HTTPBasicAuth
+import os
 
 app = Flask(__name__)
 
-SIGNALWIRE_PROJECT_KEY = 'Your_Project_ID'
-SIGNALWIRE_TOKEN = 'Your_Auth_Token'
-SIGNALWIRE_SPACE = 'Your_Space.signalwire.com'
+SIGNALWIRE_PROJECT_KEY = os.environ['SIGNALWIRE_PROJECT_KEY'];
+SIGNALWIRE_TOKEN = os.environ['SIGNALWIRE_TOKEN'];
+SIGNALWIRE_SPACE = os.environ['SIGNALWIRE_SPACE'];
 SIGNALWIRE_HOST = 'relay.signalwire.com'
 ```
 
