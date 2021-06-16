@@ -333,11 +333,11 @@ To use this script, you need to expose it to the web, either through `ngrok` or 
 
 Here is a picture of what the moderator view looks like:
 
-INSERT PHOTO
+![Moderator View](assets/moderator_view_video_demo.png)
 
 Here is a picture of what the guest view looks like:
 
-INSERT PHOTO
+![Guest View](assets/guest_view_video_demo.png)
 
 ## Testing locally
 

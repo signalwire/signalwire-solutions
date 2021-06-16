@@ -100,7 +100,7 @@ def assignMod():
     moderatorToken = request_moderator_token(room, user)
 
     return render_template('mod.html', room=room, user=user, token=moderatorToken, logo='/static/translogo.png',
-                           host=SIGNALWIRE_HOST, userType=userType)
+                           space=SIGNALWIRE_HOST, userType=userType)
 
 
 # assign guest role - no ability to control other users
@@ -126,7 +126,7 @@ def assignGuest():
     guestToken = request_guest_token(room, user)
 
     return render_template('guest.html', room=room, user=user, token=guestToken, logo='/static/translogo.png',
-                           host=SIGNALWIRE_HOST, userType=userType)
+                           space=SIGNALWIRE_HOST, userType=userType)
 
 
 if __name__ == "__main__":
