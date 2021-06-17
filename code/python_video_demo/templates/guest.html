@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Video Conferencing</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://cdn.signalwire.com/libs/js/signalwire/signalwire-alpha-preview-3.js"></script>
+  <script type="text/javascript" src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <style>
+    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+    .row.content {height: 550px}
+
+    /* Set gray background color and 100% height */
+    .sidenav {
+
+       background-color: #9dbcd4;
+      height: 100%;
+      min-height: calc(100vh - 50px);
+    }
+
+    .jumbotron {
+
+    background-color: #f1f1f1;
+    margin-bottom: 0px;
+    }
+
+    .btn-toolbar{
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  }
+
+    /* On small screens, set height to 'auto' for the grid */
+    @media screen and (max-width: 767px) {
+      .row.content {height: auto;}
+    }
+
+    .btn-group.special {
+  display: flex;
+}
+
+
+  </style>
+</head>
+<body>
+
+<div class="jumbotron">
+  <div class="container-fluid text-center">
+    <h1><img src="{{ logo }}" alt="SignalWire Logo" class="float-left" width="200" height="200">Video API Conferencing with SignalWire</h1>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <div class="row content">
+    <div class="col-sm-3 sidenav hidden-xs">
+      <h3>User/Room Settings</h3>
+      <ul class="nav nav-pills nav-stacked">
+        <li>Current Room: {{room}}</li>
+        <li>Current User: {{user}}</li>
+        <li>User Permissions: {{userType}}</li>
+        </ul>
+      <h3>Current Participants</h3>
+      <ul class="nav nav-pills nav-stacked">
+        <li id="app"></li>
+      </ul>
+    </div>
+    <div class="col-sm-9 justify-content-center">
+      <div id="rootElement"></div>
+      <div class="btn-toolbar w-100" role="group">
+        <button id="muteSelfBtn" class="btn btn-primary btn-lg active px-3 mt-2 d-none" onClick="muteSelf()" aria-pressed="true" >Mute Mic</button>
+        <button id="unmuteSelfBtn" class="btn btn-primary btn-lg active px-3 mt-2 d-none" onClick="unmuteSelf()" aria-pressed="true" >UnMute Mic</button>
+        <button id="muteVideoSelfBtn" class="btn btn-primary btn-lg active px-3 mt-2 d-none" onClick="muteVideoSelf()" aria-pressed="true" >Mute Video</button>
+        <button id="unmuteVideoSelfBtn" class="btn btn-primary btn-lg active px-3 mt-2 d-none" onClick="unmuteVideoSelf()" aria-pressed="true" >Unmute Video</button>
+      </div>
+      </div>
+
+
+<script type="text/javascript">
+    var client;
+    var rtcSession = null;
+
+    var host = "{{space}}";
+    var token = "{{token}}";
+
+    var participantList = [];
+
+    const muteButtons = [
+      muteSelfBtn,
+      unmuteSelfBtn,
+      muteVideoSelfBtn,
+      unmuteVideoSelfBtn
+    ]
+
+    ready(function() {
+      connect();
+    });
+
+    function connect() {
+    console.log(token)
+      SignalWire.Video.createRoomObject({
+        host: host,
+        token: token,
+        rootElementId: 'rootElement',
+        audio: 'true',
+        video: 'true',
+      }).then(rtc => {
+
+        rtcSession = rtc
+
+        console.debug('Video SDK room', rtcSession)
+
+        rtcSession.on('destroy', (params) => {
+          hangup()
+        })
+
+
+      rtcSession.on('room.started', (params) =>
+        console.debug('>> DEMO room.started', params)
+      )
+
+      // Add members to participantList if they don't already exist
+      rtcSession.on('room.joined', (params) => {
+        console.debug('>> DEMO room.joined', params)
+        console.log('Room Joined...')
+
+        var i;
+
+        for (i=0; i < params.room.members.length; i++) {
+          if (participantList[params.room.members[i].id]){
+            console.log('User already exists');
+          }
+          else {
+            var participantListObj = {userId: params.room.members[i].id, userName: params.room.members[i].name};
+            let partObj={};
+            partObj[participantListObj.userId]=participantListObj;
+            participantList.push(partObj)
+
+          }};
+
+        listParticipants();
+
+        muteButtons.forEach(button => {
+          button.classList.remove('d-none');
+          button.disabled = false;
+        })
+      })
+
+
+      rtcSession.on('room.updated', (params) =>
+        console.debug('>> DEMO room.updated', params)
+      )
+
+      rtcSession.on('room.ended', (params) => {
+        console.debug('>> DEMO room.ended', params)
+        hangup()
+      })
+
+      // add new member to participant list if it doesn't already exist
+      rtcSession.on('member.joined', (params) => {
+        console.debug('>> DEMO member.joined', params)
+
+        if (participantList[params.member.id]) {
+            console.log('User already exists');
+          }
+        else {
+            var participantListObj = {userId: params.member.id, userName: params.member.name};
+            console.log("Participant list object is: ");
+            console.log(participantListObj);
+            let partObj={};
+            partObj[participantListObj.userId]=participantListObj;
+            console.log("Participant list object is: ");
+            console.log(participantListObj);
+            participantList.push(partObj)
+          };
+
+
+        console.log('Member Joined...');
+        console.log('Updated Participant List:');
+        console.log(participantList);
+
+        listParticipants();
+
+      })
+
+      rtcSession.on('member.updated', (params) =>
+        console.debug('>> DEMO member.updated', params)
+      )
+
+      // remove member from participant list
+      rtcSession.on('member.left', (params) => {
+        console.debug('>> DEMO member.left', params);
+        participantList.pop(params.member.id);
+
+        console.log('Member Left');
+        console.log('Updated Participant List...');
+        console.log(participantList);
+        listParticipants();
+      })
+
+      rtcSession.on('layout.changed', (params) =>
+        console.debug('>> DEMO layout.changed', params)
+      )
+
+      rtcSession.on('track', (event) =>
+        console.debug('>> DEMO track', event)
+      )
+
+      rtcSession.join();
+    })
+  }
+
+  function hangup() {
+    if (rtcSession) {
+      rtcSession.hangup();
+    }
+
+    muteButtons.forEach(button => {
+      button.classList.add('d-none');
+      button.disabled = true;
+    })
+  }
+
+  // jQuery document.ready equivalent
+  function ready(callback) {
+    if (document.readyState != 'loading') {
+      callback();
+    } else if (document.addEventListener) {
+      document.addEventListener('DOMContentLoaded', callback);
+    } else {
+      document.attachEvent('onreadystatechange', function() {
+        if (document.readyState != 'loading') {
+          callback();
+        }
+      });
+    }
+  }
+
+  // list all current room participants
+  function listParticipants() {
+    console.log('Listing Participants...');
+    console.log(participantList);
+
+    var list = document.createElement('ul');
+    var app = document.querySelector('#app');
+    app.textContent = '';
+
+
+    participantList.forEach(function(elem) {
+      let sid = Object.keys(elem)[0]
+      var userId = elem[sid].userId;
+
+      var li = document.createElement('li');
+      li.textContent = elem[sid].userName + " : " + elem[sid].userId;
+
+
+      list.appendChild(li);
+
+    });
+
+    app.appendChild(list);
+}
+
+
+  // mute your own audio
+  function muteSelf() {
+    rtcSession.audioMute(rtcSession.memberId);
+  }
+
+  // unmute your audio
+  function unmuteSelf() {
+    rtcSession.audioUnmute(rtcSession.memberId);
+  }
+
+  // mute your video
+  function muteVideoSelf() {
+    rtcSession.videoMute(rtcSession.memberId);
+  }
+
+  // unmute your video
+  function unmuteVideoSelf() {
+    rtcSession.videoUnmute(rtcSession.memberId);
+  }
+
+
+</script>
+</body>
+</html>
