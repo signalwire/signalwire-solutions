@@ -130,14 +130,14 @@
         console.debug('>> DEMO room.joined', params)
         console.log('Room Joined...')
 
-        var i;
+        var participant;
 
-        for (i=0; i < params.room.members.length; i++) {
-          if (participantList[params.room.members[i].id]){
+        for (participant=0; participant < params.room.members.length; participant++) {
+          if (participantList[params.room.members[participant].id]){
             console.log('User already exists');
           }
           else {
-            var participantListObj = {userId: params.room.members[i].id, userName: params.room.members[i].name};
+            var participantListObj = {userId: params.room.members[participant].id, userName: params.room.members[participant].name};
             let partObj={};
             partObj[participantListObj.userId]=participantListObj;
             participantList.push(partObj)
