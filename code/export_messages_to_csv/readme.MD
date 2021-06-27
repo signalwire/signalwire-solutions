@@ -281,7 +281,6 @@ Record keeping is important, so we hope these examples help make it easier to fi
 
 
 # Sign Up Here
-__Include the following section at the bottom so our potential customers who may not already have a space have instructions on how to proceed.__
 
 If you would like to test this example out, you can create a SignalWire account and space [here](https://m.signalwire.com/signups/new?s=1).
 
