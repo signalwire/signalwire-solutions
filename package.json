@@ -1,0 +1,16 @@
+{
+    "name": "relay-ivr",
+    "version": "1.0.0",
+    "description": "A simple IVR using SignalWire's Relay API",
+    "main": "Relay-IVR-2.js",
+    "scripts": {
+        "test": "echo \"Error:no test specified\" && exit 1",
+        "start": "node Relay-IVR-2.js"
+    },
+    "author": "Brett Burnette <brett.burnette@signalwire.com>",
+    "dependencies": {
+        "@signalwire/js": "^1.2.7",
+        "@signalwire/node": "^2.3.3"
+    },
+    "devDependencies": {}
+}
