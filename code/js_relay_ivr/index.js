@@ -1,7 +1,15 @@
-const {RelayConsumer} = require('@signalwire/node') 
+require('dotenv').config();
+const {RelayConsumer} = require('@signalwire/node')
+
 const consumer = new RelayConsumer({ 
-    project: 'yourProjectId',
-    token: 'yourApiToken',
+    project: process.env.SIGNALWIRE_PROJECT_KEY,
+    token: process.env.SIGNALWIRE_TOKEN,
+    contexts: ['incoming'],
+
+    ready: async ({ client }) => {
+        client.__logger.setLevel(client.__logger.levels.DEBUG)
+    },
+
     onIncomingCall: async (call) => {
         const {successful} = await call.answer()
         if (!successful) {
@@ -57,3 +65,5 @@ const consumer = new RelayConsumer({
     }
 
 })
+
+consumer.run();

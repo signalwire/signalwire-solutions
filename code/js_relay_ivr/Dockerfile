@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install 
 
-COPY Relay-IVR-2.js .
+COPY index.js .
 
 EXPOSE 3000
 
