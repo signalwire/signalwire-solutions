@@ -9,6 +9,7 @@ SignalWire Video APIs allow you to host real-time video calls and video conferen
 We will use **server side Python** and **client side Javascript** to build an interactive application that can handle calls with multiple users with ease.
 
 Below is a screenshot of the **moderator view**. Notice the controls on the left and at the bottom of the screen:
+<<<<<<< Updated upstream
 ![Moderator View](assets/moderator_view_2.png)
 
 Below is a screenshot of the **guest view**:
@@ -27,6 +28,25 @@ Documentation for SignalWire Communications API is available [here](https://docs
 
 ## Authenticating your application
 
+=======
+[Moderator View](assets/moderator_view_video_demo.png)
+
+Below is a screenshot of the **guest view**:
+[Guest View](assets/guest_view_video_demo.png)
+
+## SignalWire Video API
+
+SignalWire Communications API consists of two different APIs that interact to help you build applications.
+
+- **Server-side API**: This is a collection of REST endpoints used to create and manage rooms, and add access tokens to [them](https://developer.signalwire.com/signalwire-api/reference/list_rooms).
+
+- **Client side API**: The Javascript SDK allows you to build a custom video experience in a simple, standard-based [way](https://developer.signalwire.com/signalwire-client-sdks/docs).
+
+Documentation for SignalWire Communications API is available [here](https://docs.signalwire.com/topics/api/)!
+
+## Authenticating your application
+
+>>>>>>> Stashed changes
 The application needs a SignalWire API token. You can sign up [here](https://signalwire.com/signup), then update the .env file with the Project ID as `SIGNALWIRE_PROJECT_KEY`, Auth Token as `SIGNALWIRE_TOKEN`, and SignalWire Space URL as `SIGNALWIRE_SPACE`. You can see an example of this in the script below with made up values.
 
 ```
@@ -227,7 +247,11 @@ var participantListObj = {userId: params.member.id, userName: params.member.name
 
 When you are in a room, it is helpful to be able to see all of the users who are in the room with you. The function `listParticipants()` will list all the current users and if you're a moderator, it will allow you to control them with buttons. `listParticipants()` will be called any time the room is joined and any time a member joins/leaves so that it is always updated.
 
+<<<<<<< Updated upstream
 ![Participant List](assets/listed_participants.png)
+=======
+[Listed Participants](assets/listed_participants.png)
+>>>>>>> Stashed changes
 
 Below is an abridged version with the main points. Here we will go through the participants one by one and list them as an HTML element. In the nav bar (or wherever you'd like participants to be displayed), we need to create a `<li>` element with an id equal to "app". In `listParticipants()`, we will start by creating a ul element called list and selecting the `<li>` element with id app set to the variable app. We will set `app.textContent` to an empty string to make sure that every time it is called, the original list is cleared.
 

@@ -14,4 +14,8 @@ EXPOSE 5000
 
 COPY . .
 
+<<<<<<< Updated upstream
 CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
+=======
+CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
+>>>>>>> Stashed changes
