@@ -138,6 +138,7 @@
           }
           else {
             var participantListObj = {userId: params.room.members[participant].id, userName: params.room.members[participant].name};
+
             let partObj={};
             partObj[participantListObj.userId]=participantListObj;
             participantList.push(partObj)

@@ -9,7 +9,7 @@ SignalWire Video APIs allow you to host real-time video calls and video conferen
 We will use **server side Python** and **client side Javascript** to build an interactive application that can handle calls with multiple users with ease.
 
 Below is a screenshot of the **moderator view**. Notice the controls on the left and at the bottom of the screen:
-<<<<<<< Updated upstream
+
 ![Moderator View](assets/moderator_view_2.png)
 
 Below is a screenshot of the **guest view**:
@@ -28,25 +28,6 @@ Documentation for SignalWire Communications API is available [here](https://docs
 
 ## Authenticating your application
 
-=======
-[Moderator View](assets/moderator_view_video_demo.png)
-
-Below is a screenshot of the **guest view**:
-[Guest View](assets/guest_view_video_demo.png)
-
-## SignalWire Video API
-
-SignalWire Communications API consists of two different APIs that interact to help you build applications.
-
-- **Server-side API**: This is a collection of REST endpoints used to create and manage rooms, and add access tokens to [them](https://developer.signalwire.com/signalwire-api/reference/list_rooms).
-
-- **Client side API**: The Javascript SDK allows you to build a custom video experience in a simple, standard-based [way](https://developer.signalwire.com/signalwire-client-sdks/docs).
-
-Documentation for SignalWire Communications API is available [here](https://docs.signalwire.com/topics/api/)!
-
-## Authenticating your application
-
->>>>>>> Stashed changes
 The application needs a SignalWire API token. You can sign up [here](https://signalwire.com/signup), then update the .env file with the Project ID as `SIGNALWIRE_PROJECT_KEY`, Auth Token as `SIGNALWIRE_TOKEN`, and SignalWire Space URL as `SIGNALWIRE_SPACE`. You can see an example of this in the script below with made up values.
 
 ```
@@ -127,29 +108,7 @@ Next, we need to define our two routes for moderator and guest users.
 **Let's start with the moderator route.** We will begin by setting the `defaultRoom` for instances when a custom room is not chosen. We will also set the `userType` to a moderator. However, we don't want users not having options for customization! We will accept query params for room and user to allow for specific rooms and users to be chosen.
 
 An example of how this would look is `https://localhost?room=Reception?user=Receptionist`. We will then call our `createRoom()` function in order to create the room. Next, we will assign the value of running our function `request_moderator_token()` with arguments `room` and `user` that were defined earlier in the function to `moderatorToken`. Now we will render the bootstrap template with our values for `room`, `user`, `token`, `space`, `userType`, and `logo`.
-
-```python
-@app.route("/", methods=['GET', "POST"])
-def assignMod():
-	defaultRoom = 'Main_Office'
-	userType = "Moderator"
-
-	if request.args.get('room'):
-    	room = request.args.get('room')
-	else:
-    	room = defaultRoom
-
-	if request.args.get('user'):
-    	user = request.args.get('user')
-	else:
-    	user = "user_" + str(random.randint(1, 100))
-
-	create_room(room)
-	moderatorToken = request_moderator_token(room, user)
-
-	return render_template('mod.html', room=room, user=user, token=moderatorToken, logo='/static/transplogo.png',
-                       	space=SIGNALWIRE_HOST, userType=userType)
-```
+rce page](https://signalwire.com/resources/getting-started/trial-mode).
 
 **The guest route** This will be identical to the route above except that we will call the `request_guest_token()` function instead and set `userType` to something other than `Moderator` to indicate that this user does not have full permissions. In this example, I will use `Regular User`. You will also need to pass the `guest.html` file as the variable instead of `mod.html`.
 
@@ -247,11 +206,7 @@ var participantListObj = {userId: params.member.id, userName: params.member.name
 
 When you are in a room, it is helpful to be able to see all of the users who are in the room with you. The function `listParticipants()` will list all the current users and if you're a moderator, it will allow you to control them with buttons. `listParticipants()` will be called any time the room is joined and any time a member joins/leaves so that it is always updated.
 
-<<<<<<< Updated upstream
-![Participant List](assets/listed_participants.png)
-=======
 [Listed Participants](assets/listed_participants.png)
->>>>>>> Stashed changes
 
 Below is an abridged version with the main points. Here we will go through the participants one by one and list them as an HTML element. In the nav bar (or wherever you'd like participants to be displayed), we need to create a `<li>` element with an id equal to "app". In `listParticipants()`, we will start by creating a ul element called list and selecting the `<li>` element with id app set to the variable app. We will set `app.textContent` to an empty string to make sure that every time it is called, the original list is cleared.
 
@@ -315,7 +270,8 @@ function kickUser(id) {
 
 To run the application, execute `export FLASK_APP=main.py` then run `flask run`.
 
-To run in a docker container, first build the image with `docker build -t python_video_demo .` then run with `docker run -e SIGNALWIRE_PROJECT_KEY=<YOUR_PROJECT_ID> -e SIGNALWIRE_TOKEN=<YOUR_API_TOKEN> -e SIGNALWIRE_SPACE=<YOUR_SPACE_URL> -p 5000:5000 python_video_demo`. Lastly, access the application by using `localhost:5000`.
+To run in a docker container, first build the image with `docker build -t python_video_demo .` then run with `docker run -e SIGNALWIRE_PROJECT_KEY=<YOUR_PROJECT_ID> -e SIGNALWIRE_TOKEN=<YOUR_API_TOKEN> -e SIGNALWIRE_SPACE=<YOUR_SPACE_URL> -p 5000:5000 python_video_demo`. Lastly, access the application by using `localhost:5000`. 
+
 
 ## How to use the application
 

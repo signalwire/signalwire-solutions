@@ -26,7 +26,7 @@ async function CreateRoomIfItDoesntExist(name) {
         // Get the list of rooms
         console.log(" - Getting the list of rooms")
         let rooms = await axios.get(apiurl + "/rooms", { auth });
-        existingrooms = rooms.data.rooms.map(x => x.name.toLowerCase())
+        existingrooms = rooms.data.data.map(x => x.name.toLowerCase())
         console.log(" - Rooms that currently exist: ", existingrooms)
     }
     catch (e) {

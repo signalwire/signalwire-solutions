@@ -3,11 +3,7 @@ import requests
 import json
 import random
 from requests.auth import HTTPBasicAuth
-<<<<<<< Updated upstream
 import os
-=======
-import os 
->>>>>>> Stashed changes
 
 app = Flask(__name__)
 
