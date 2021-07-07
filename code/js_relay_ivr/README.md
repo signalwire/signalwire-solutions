@@ -79,7 +79,7 @@ This code example is simply the foundation of an IVR in SignalWire's Communicati
 
 If you wish to run the application locally, first load the `.env` file with `set -o allexport; source.env; set +o allexport`, and then run `npm install` followed by `npm start`.
 
-We recommend running the application via Docker, by first building the image with `docker build -t relayivr` and then `docker run -it --rm --name relayivr --env.file .env relayivr`. 
+We recommend running the application via Docker, by first building the image with `docker build -t relayivr` and then `docker run -it --rm --name relayivr --env-file .env relayivr`. 
 
 You can just run `sh run_docker.sh` in your shell and the container will be built and started for you. 
 ​
