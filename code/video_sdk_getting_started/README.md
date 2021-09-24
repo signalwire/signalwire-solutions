@@ -22,7 +22,11 @@ API_URL=https://<your space name>.signalwire.com/api/video
 
 ## Running the application
 
-If you are running the application locally, simply create an `.env` file and set it up as above. Then start the application with `node index.js`.
+If you are running the application locally:
+
+ - install the dependencies with `npm install`
+ - create an `.env` file and set it up as above
+ - start the application with `node index.js`
 
 It is simpler to run the application via Docker, by first building the image with `docker build -t videosdk .` followed by `docker run -it --rm -p 4000:4000 --name nodelenny --env-file .env videosdk`.
 

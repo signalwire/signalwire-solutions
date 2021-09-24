@@ -7,7 +7,7 @@
     <!-- Import Axios library (You can use the Fetch API if you like) -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <!-- Import SignalWire library -->
-    <script src="https://cdn.signalwire.com/libs/js/signalwire/signalwire-alpha-preview-3.js"></script>
+    <script src="https://unpkg.com/@signalwire/js@3"></script>
   </head>
 
   <body>
@@ -17,8 +17,20 @@
         <input
           type="text"
           id="usernameinput"
-          placeholder="Enter your username"
-        />
+          placeholder="Your Name"
+          required
+          minlength="1"
+          maxlength="30"
+          pattern="[^' ']+"
+        /><br />
+        <input
+          type="text"
+          id="roomnameinput"
+          placeholder="Room's name (default: signalwire)"
+          minlength="1"
+          maxlength="30"
+          pattern="[^' ']+"
+        /><br />
         <input type="submit" value="Join" />
       </form>
     </div>
