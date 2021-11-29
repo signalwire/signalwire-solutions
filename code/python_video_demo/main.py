@@ -1,27 +1,29 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template
 import requests
 import json
 import random
 from requests.auth import HTTPBasicAuth
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
-SIGNALWIRE_PROJECT_KEY = os.environ['SIGNALWIRE_PROJECT_KEY'];
-SIGNALWIRE_TOKEN = os.environ['SIGNALWIRE_TOKEN'];
-SIGNALWIRE_SPACE = os.environ['SIGNALWIRE_SPACE'];
-SIGNALWIRE_HOST = 'relay.signalwire.com'
+SIGNALWIRE_PROJECT_ID = os.environ['SIGNALWIRE_PROJECT_ID']
+SIGNALWIRE_API_TOKEN = os.environ['SIGNALWIRE_API_TOKEN']
+SIGNALWIRE_SPACE_URL = os.environ['SIGNALWIRE_SPACE_URL']
 
 
 # handle HTTP requests
 def handle_http(payload, endpoint):
-    user = SIGNALWIRE_PROJECT_KEY
-    passw = SIGNALWIRE_TOKEN
+    user = SIGNALWIRE_PROJECT_ID
+    passw = SIGNALWIRE_API_TOKEN
 
     data = json.dumps(payload)
     print(data)
 
-    response = requests.post("https://" + SIGNALWIRE_SPACE + "/api/video/" + endpoint,
+    response = requests.post("https://" + SIGNALWIRE_SPACE_URL + "/api/video/" + endpoint,
                              data=data,
                              auth=HTTPBasicAuth(user, passw),
                              headers={"Content-Type": "application/json"})
@@ -99,8 +101,7 @@ def assignMod():
     create_room(room)
     moderatorToken = request_moderator_token(room, user)
 
-    return render_template('mod.html', room=room, user=user, token=moderatorToken, logo='/static/translogo.png',
-                           space=SIGNALWIRE_HOST, userType=userType)
+    return render_template('mod.html', room=room, user=user, token=moderatorToken, logo='/static/translogo.png', userType=userType)
 
 
 # assign guest role - no ability to control other users
@@ -125,8 +126,7 @@ def assignGuest():
     create_room(room)
     guestToken = request_guest_token(room, user)
 
-    return render_template('guest.html', room=room, user=user, token=guestToken, logo='/static/translogo.png',
-                           space=SIGNALWIRE_HOST, userType=userType)
+    return render_template('guest.html', room=room, user=user, token=guestToken, logo='/static/translogo.png', userType=userType)
 
 
 if __name__ == "__main__":
