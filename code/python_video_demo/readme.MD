@@ -199,25 +199,23 @@ To summarize, we simply set up the client to put the video in a roort element, a
 ```js
 function connect() {
   console.log(token);
-  SignalWire.Video.createRoomObject({
+  rtcSession = new SignalWire.Video.RoomSession({
     host: host,
     token: token,
-    rootElementId: "rootElement",
+    rootElement: document.getElementById('rootElement'),
     audio: "true",
     video: "true",
-  }).then((rtc) => {
-    rtcSession = rtc;
+  })
 
-    console.debug("Video SDK room", rtcSession);
+  console.debug("Video SDK room", rtcSession);
 
-    rtcSession.on("destroy", (params) => {
-      hangup();
-    });
-
-    // extra handlers removed for legibility. Check the application code for more examples.
-
-    rtcSession.join();
+  rtcSession.on("destroy", (params) => {
+    hangup();
   });
+
+  // extra handlers removed for legibility. Check the application code for more examples.
+
+  rtcSession.join();
 }
 ```
 
