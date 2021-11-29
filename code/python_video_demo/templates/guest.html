@@ -84,15 +84,13 @@
         </div>
       </div>
 
-
       <script type="text/javascript">
-        var client;
-        var rtcSession = null;
+        let roomSession = null;
 
-        var host = "{{space}}";
-        var token = "{{token}}";
+        const host = "{{space}}";
+        const token = "{{token}}";
 
-        var participantList = [];
+        let participantList = [];
 
         const muteButtons = [
           muteSelfBtn,
@@ -107,45 +105,20 @@
 
         function connect() {
           console.log(token)
-          rtcSession = new SignalWire.Video.RoomSession({
+          roomSession = new SignalWire.Video.RoomSession({
             host: host,
             token: token,
             rootElement: document.getElementById('rootElement'),
-            audio: 'true',
-            video: 'true',
+            audio: true,
+            video: true,
           })
 
-          console.debug('Video SDK room', rtcSession)
-
-          rtcSession.on('destroy', (params) => {
-            hangup()
-          })
-
-
-          rtcSession.on('room.started', (params) =>
-            console.debug('>> DEMO room.started', params)
-          )
+          console.debug('Video SDK room', roomSession)
 
           // Add members to participantList if they don't already exist
-          rtcSession.on('room.joined', (params) => {
-            console.debug('>> DEMO room.joined', params)
-            console.log('Room Joined...')
-
-            var i;
-
-            for (i = 0; i < params.room.members.length; i++) {
-              if (participantList[params.room.members[i].id]) {
-                console.log('User already exists');
-              }
-              else {
-                var participantListObj = { userId: params.room.members[i].id, userName: params.room.members[i].name };
-                let partObj = {};
-                partObj[participantListObj.userId] = participantListObj;
-                participantList.push(partObj)
-
-              }
-            };
-
+          roomSession.on('room.joined', async (e) => {
+            console.debug('>> DEMO room.joined', e);
+            participantList = [...e.room.members];
             listParticipants();
 
             muteButtons.forEach(button => {
@@ -154,72 +127,53 @@
             })
           })
 
+          roomSession.on('member.joined', (e) => {
+            console.debug('>> DEMO member.joined', e);
+            participantList = [...participantList, e.member]
+            listParticipants();
+          })
 
-          rtcSession.on('room.updated', (params) =>
+          roomSession.on('member.updated', (e) => {
+            console.debug('>> DEMO member.updated', e);
+            const memberIndex = participantList.findIndex(
+              x => x.id === e.member.id
+            )
+            if (memberIndex < 0) {
+              return
+            }
+            participantList[memberIndex] = {
+              ...participantList[memberIndex],
+              ...e.member
+            }
+            listParticipants();
+          })
+
+          roomSession.on('member.left', (e) => {
+            console.debug('>> DEMO member.left', e);
+            participantList = participantList.filter(
+              (m) => m.id !== e.member.id
+            );
+            listParticipants();
+
+            if (e.member.id === roomSession.memberId) {
+              hangup()
+            }
+          })
+
+          roomSession.on('room.updated', (params) =>
             console.debug('>> DEMO room.updated', params)
           )
 
-          rtcSession.on('room.ended', (params) => {
-            console.debug('>> DEMO room.ended', params)
-            hangup()
-          })
-
-          // add new member to participant list if it doesn't already exist
-          rtcSession.on('member.joined', (params) => {
-            console.debug('>> DEMO member.joined', params)
-
-            if (participantList[params.member.id]) {
-              console.log('User already exists');
-            }
-            else {
-              var participantListObj = { userId: params.member.id, userName: params.member.name };
-              console.log("Participant list object is: ");
-              console.log(participantListObj);
-              let partObj = {};
-              partObj[participantListObj.userId] = participantListObj;
-              console.log("Participant list object is: ");
-              console.log(participantListObj);
-              participantList.push(partObj)
-            };
-
-
-            console.log('Member Joined...');
-            console.log('Updated Participant List:');
-            console.log(participantList);
-
-            listParticipants();
-
-          })
-
-          rtcSession.on('member.updated', (params) =>
-            console.debug('>> DEMO member.updated', params)
-          )
-
-          // remove member from participant list
-          rtcSession.on('member.left', (params) => {
-            console.debug('>> DEMO member.left', params);
-            participantList.pop(params.member.id);
-
-            console.log('Member Left');
-            console.log('Updated Participant List...');
-            console.log(participantList);
-            listParticipants();
-          })
-
-          rtcSession.on('layout.changed', (params) =>
+          roomSession.on('layout.changed', (params) =>
             console.debug('>> DEMO layout.changed', params)
           )
 
-          rtcSession.on('track', (event) =>
-            console.debug('>> DEMO track', event)
-          )
-
-          rtcSession.join();
+          roomSession.join();
         }
 
         function hangup() {
-          if (rtcSession) {
-            rtcSession.hangup();
+          if (roomSession) {
+            roomSession.leave();
           }
 
           muteButtons.forEach(button => {
@@ -248,48 +202,39 @@
           console.log('Listing Participants...');
           console.log(participantList);
 
-          var list = document.createElement('ul');
-          var app = document.querySelector('#app');
+          const list = document.createElement('ul');
+          const app = document.querySelector('#app');
           app.textContent = '';
 
-
           participantList.forEach(function (elem) {
-            let sid = Object.keys(elem)[0]
-            var userId = elem[sid].userId;
-
-            var li = document.createElement('li');
-            li.textContent = elem[sid].userName + " : " + elem[sid].userId;
-
+            const li = document.createElement('li');
+            li.textContent = elem.name + " : " + elem.id;
 
             list.appendChild(li);
-
           });
 
           app.appendChild(list);
         }
 
-
         // mute your own audio
         function muteSelf() {
-          rtcSession.audioMute(rtcSession.memberId);
+          roomSession.audioMute({ memberId: roomSession.memberId });
         }
 
         // unmute your audio
         function unmuteSelf() {
-          rtcSession.audioUnmute(rtcSession.memberId);
+          roomSession.audioUnmute({ memberId: roomSession.memberId });
         }
 
         // mute your video
         function muteVideoSelf() {
-          rtcSession.videoMute(rtcSession.memberId);
+          roomSession.videoMute({ memberId: roomSession.memberId });
         }
 
         // unmute your video
         function unmuteVideoSelf() {
-          rtcSession.videoUnmute(rtcSession.memberId);
+          roomSession.videoUnmute({ memberId: roomSession.memberId });
         }
-
-
       </script>
 </body>
 
