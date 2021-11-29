@@ -4,7 +4,7 @@ const auth = {
     username: process.env.PROJECT_ID, // Project-ID
     password: process.env.API_TOKEN, // API token 
 };
-const apiurl = process.env.API_URL;
+const apiurl = `https://${process.env.API_URL}/api/video`;
 
 // Basic express boilerplate
 const express = require('express');

@@ -40,14 +40,16 @@ async function joinwithusername() {
 
         try {
             console.log("Setting up RTC session")
-            roomSession = await SignalWire.Video.joinRoom({
+            roomSession = new SignalWire.Video.RoomSession({
                 token,
-                rootElementId: 'root',
+                rootElement: document.getElementById('root'),
             })
 
             roomSession.on("room.joined", e => logevent("You joined the room"))
             roomSession.on("member.joined", e => logevent(e.member.name + " has joined the room"))
             roomSession.on("member.left", e => logevent(e.member.id + " has left the room"))
+
+            await roomSession.join()
         } catch (error) {
             console.error('Something went wrong', error)
         }
