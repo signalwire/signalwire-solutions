@@ -17,7 +17,7 @@ To store your SignalWire API credentials, you need to create a file named `.env`
 ```
 PROJECT_ID=<Project ID here>
 API_TOKEN=<Your API token here>
-API_URL=https://<your space name>.signalwire.com/api/video
+API_URL=<your space name>.signalwire.com
 ```
 
 ## Running the application
