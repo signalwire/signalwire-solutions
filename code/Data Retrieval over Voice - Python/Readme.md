@@ -11,13 +11,13 @@ Run app.py in your python environment of choice
 
 # Step by Step code walkthrough
 This application runs in one `app.py` file.
-You will additionally need to create a .env file for your authentication
+You will need to create a copy of `example.env` and fill it in with your own values.
 
 ## Code Breakdown
 
 ### Getting Started:
 
-First we will import our `Consumer` from the SignalWire Relay API, and import `os` which will handle our environment variables containing our SignalWire credentials.
+First we will import our `Consumer` from the SignalWire Relay API. We will also import `os` and `load_dotenv` from `dotenv` which will handle our environment variables containing our SignalWire credentials.
 Next we will establish our CustomConsumer class and create a function within that class called `setup`. This function will contain our environment variables, as well as our relay context, and some additional variables.
 
 `self.clientlist` is a python dictionary where each key is assigned to a list of data.
@@ -27,6 +27,9 @@ Next we will establish our CustomConsumer class and create a function within tha
 ```python
 from signalwire.relay.consumer import Consumer
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class CustomConsumer(Consumer):

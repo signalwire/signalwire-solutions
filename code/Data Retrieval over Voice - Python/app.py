@@ -1,13 +1,16 @@
 from signalwire.relay.consumer import Consumer
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class CustomConsumer(Consumer):
     def setup(self):
         # holds our environment variables
-        self.project = os.environ['ProjectID']
-        self.token = os.environ['AuthToken']
-        self.url = os.environ['SpaceUrl']
+        self.project = os.environ['SIGNALWIRE_PROJECT_ID']
+        self.token = os.environ['SIGNALWIRE_API_TOKEN']
+        self.url = os.environ['SIGNALWIRE_SPACE_URL']
 
         # make sure your signalwire number is pointed to this context
         self.contexts = ['office']
