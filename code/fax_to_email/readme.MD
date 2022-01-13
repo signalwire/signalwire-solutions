@@ -9,10 +9,12 @@ We start with the necessary imports and instantiate a Flask app:
 import os
 import requests
 import pprint
+from dotenv import load_dotenv
 
 from flask import Flask, request
 
 app = Flask(__name__)
+load_dotenv()
 ```
 
 Next, we need to define a function that will use the MailGun API to send the email. You can read more about sending with the MailGun API in their documentation here: [https://documentation.mailgun.com/en/latest/quickstart-sending.html](https://documentation.mailgun.com/en/latest/quickstart-sending.html)
