@@ -20,16 +20,22 @@ That creates a much better experience because no matter what the number of parti
 
 Beta documentation is [here](https://docs.signalwire.com/topics/api/) and will be updated as new features are added.
 
+## Installation requirements
+
+You'll need to install the required libraries as follows:
+
+    pip3 install flask python-dotenv
+
 ## Configuring the code
 
 Start by copying the env.example file to a file named .env, and fill in the necessary information.
 
-The application needs a SignalWire API token. You can sign up [here](https://signalwire.com/signup), then update the .env file with the Project ID as `SIGNALWIRE_PROJECT_KEY`, Auth Token as `SIGNALWIRE_TOKEN`, and SignalWire Space URL as `SIGNALWIRE_SPACE`. You can see an example of this in the script below with made up values.
+The application needs a SignalWire API token. You can sign up [here](https://signalwire.com/signup), then update the .env file with the Project ID as `SIGNALWIRE_PROJECT_ID`, Auth Token as `SIGNALWIRE_API_TOKEN`, and SignalWire Space URL as `SIGNALWIRE_SPACE_URL`. You can see an example of this in the script below with made up values.
 
 ```
-SIGNALWIRE_PROJECT_KEY = '7dafyd8fsd-adfhsdj7asdhdf-fhsdkjs'
-SIGNALWIRE_TOKEN = 'PTsjdfsh123hkjdshdfs'
-SIGNALWIRE_SPACE = 'example.signalwire.com'
+SIGNALWIRE_PROJECT_ID = '7dafyd8fsd-adfhsdj7asdhdf-fhsdkjs'
+SIGNALWIRE_API_TOKEN = 'PTsjdfsh123hkjdshdfs'
+SIGNALWIRE_SPACE_URL = 'example.signalwire.com'
 ```
 
 If you sign up for the first time, your account will be start in trial mode, which you can exit by making a manual top up of $5.00. You can find more information [on the Trial Mode resource page](https://signalwire.com/resources/getting-started/trial-mode).
@@ -38,7 +44,7 @@ If you sign up for the first time, your account will be start in trial mode, whi
 
 First, we need to set up the server side code to create a room and retrieve a token for accessing it. We will need a function for handling http requests, a function to request a guest token (non moderator privlidges), a function to request a moderator token, and a function to create a room. We will need a route that when accessed gives users a moderator token as well as a separate route that gives users a guest token.
 
-We start with the necessary imports and assign values from our `.env` file to our required variables. Do not make any changes to `SIGNALWIRE_HOST`, that is already set to the value that it needs to be!
+We start with the necessary imports and assign values from our `.env` file to our required variables.
 
 ```python
 from flask import Flask, request, render_template, jsonify
@@ -50,23 +56,22 @@ import os
 
 app = Flask(__name__)
 
-SIGNALWIRE_PROJECT_KEY = os.environ['SIGNALWIRE_PROJECT_KEY'];
-SIGNALWIRE_TOKEN = os.environ['SIGNALWIRE_TOKEN'];
-SIGNALWIRE_SPACE = os.environ['SIGNALWIRE_SPACE'];
-SIGNALWIRE_HOST = 'relay.signalwire.com'
+SIGNALWIRE_PROJECT_ID = os.environ['SIGNALWIRE_PROJECT_ID']
+SIGNALWIRE_API_TOKEN = os.environ['SIGNALWIRE_API_TOKEN']
+SIGNALWIRE_SPACE_URL = os.environ['SIGNALWIRE_SPACE_URL']
 ```
 
 Given that we will be using HTTP methods, we need to define a function for handling HTTP requests. In this function, `user` is your project ID and `passw` is your authentication token. We will define `data` as the argument `payload` converted to JSON format. We will then use the requests library in order to make a POST request to the SignalWire Video API endpoint by using your specific SignalWire space and the argument `endpoint`, the JSON `payload`, basic authentication using `user` and `passw`, and headers.
 
 ```python
 def handle_http(payload, endpoint):
-    user = SIGNALWIRE_PROJECT_KEY
-    passw = SIGNALWIRE_TOKEN
+    user = SIGNALWIRE_PROJECT_ID
+    passw = SIGNALWIRE_API_TOKEN
 
     data = json.dumps(payload)
     print(data)
 
-    response = requests.post("https://" + SIGNALWIRE_SPACE + "/api/video/" + endpoint,
+    response = requests.post("https://" + SIGNALWIRE_SPACE_URL + "/api/video/" + endpoint,
                              data=data,
                              auth=HTTPBasicAuth(user, passw),
                              headers={"Content-Type": "application/json"})
@@ -150,8 +155,7 @@ def assignMod():
     create_room(room)
     moderatorToken = request_moderator_token(room, user)
 
-    return render_template('mod.html', room=room, user=user, token=moderatorToken, logo='/static/transplogo.png',
-                           space=SIGNALWIRE_HOST, userType=userType)
+    return render_template('mod.html', room=room, user=user, token=moderatorToken, logo='/static/transplogo.png', userType=userType)
 ```
 
 We will now do the guest route. We will start by setting the `defaultRoom` for when no custom room is chosen. We will also set the `userType` to moderator. Like before, we will accept query params for room and user to allow for specific rooms and users to be chosen. An example of how this would look for this route is `https.your_dev_env.ngrok.io/guest?room=Reception?user=Receptionist`. We will then call our `createRoom()` function in order to create the room. Next, we will assign the value of running our function `request_guest_token()` with arguments `room` and `user` that were defined earlier in the function to `guestToken`. Now we will render the bootstrap template with our values for `room`, `user`, `token`, `space`, `userType`, and `logo`. `logo` is a PNG that exists within the static folder, this can be removed if you prefer not to use this but you will need to remove that from the template in the nav bar as well.
@@ -175,8 +179,7 @@ def assignGuest():
     create_room(room)
     guestToken = request_guest_token(room, user)
 
-    return render_template('guest.html', room=room, user=user, token=guestToken, logo='/static/transplogo.png',
-                           space=SIGNALWIRE_HOST, userType=userType)
+    return render_template('guest.html', room=room, user=user, token=guestToken, logo='/static/transplogo.png', userType=userType)
 ```
 
 Finally, we run the application. I prefer to leave `debug=True` as the argument as any changes I make can be reloaded without having to restart the code. However, this is up to you and I will display both options below!
@@ -199,25 +202,23 @@ To summarize, we simply set up the client to put the video in a roort element, a
 ```js
 function connect() {
   console.log(token);
-  SignalWire.Video.createRoomObject({
+  roomSession = new SignalWire.Video.RoomSession({
     host: host,
     token: token,
-    rootElementId: "rootElement",
+    rootElement: document.getElementById('rootElement'),
     audio: "true",
     video: "true",
-  }).then((rtc) => {
-    rtcSession = rtc;
+  })
 
-    console.debug("Video SDK room", rtcSession);
+  console.debug("Video SDK room", roomSession);
 
-    rtcSession.on("destroy", (params) => {
-      hangup();
-    });
-
-    // extra handlers removed for legibility. Check the application code for more examples.
-
-    rtcSession.join();
+  roomSession.on("destroy", (params) => {
+    hangup();
   });
+
+  // extra handlers removed for legibility. Check the application code for more examples.
+
+  roomSession.join();
 }
 ```
 
@@ -227,24 +228,24 @@ In the moderator view, we have several functions for controlling other users sho
 
 ```js
 function videoMuteMember(id) {
-  rtcSession.videoMute({ memberId: id });
+  roomSession.videoMute({ memberId: id });
   console.log("Video Mute Member Pressed");
 }
 
 function videoUnmuteMember(id) {
-  rtcSession.videoUnmute({ memberId: id });
+  roomSession.videoUnmute({ memberId: id });
 }
 
 function muteMember(id) {
-  rtcSession.audioMute({ memberId: id });
+  roomSession.audioMute({ memberId: id });
 }
 
 function unmuteMember(id) {
-  rtcSession.audioUnmute({ memberId: id });
+  roomSession.audioUnmute({ memberId: id });
 }
 
 function kickUser(id) {
-  rtcSession.removeMember({ memberId: id });
+  roomSession.removeMember({ memberId: id });
 }
 ```
 
@@ -298,7 +299,7 @@ What this results in is the following:
 We will then call our function `listParticipants` to make sure that the list stays updated.
 
 ```javascript
-rtcSession.on("room.joined", (params) => {
+roomSession.on("room.joined", (params) => {
   var i;
 
   for (i = 0; i < params.room.members.length; i++) {

@@ -3,7 +3,7 @@ const $ = x => document.getElementById(x);
 
 const backendurl = "http://localhost:4000"
 
-let roomObject;
+let roomSession;
 
 // Simple js to control when forms appear
 function gotopage(pagename) {
@@ -25,27 +25,31 @@ function gotopage(pagename) {
 }
 
 async function joinwithusername() {
-    let username = $("usernameinput").value.trim();
+    const username = $("usernameinput").value.trim();
+    const roomname = $("roomnameinput").value.trim();
     console.log("The user picked username", username)
     gotopage("loading")
 
     try {
         let token = await axios.post(backendurl + "/get_token", {
-            user_name: username
+            user_name: username,
+            room_name: roomname
         });
         console.log(token.data)
         token = token.data.token
 
         try {
             console.log("Setting up RTC session")
-            roomObject = await SignalWire.Video.joinRoom({
+            roomSession = new SignalWire.Video.RoomSession({
                 token,
-                rootElementId: 'root',
+                rootElement: document.getElementById('root'),
             })
 
-            roomObject.on("room.joined", e => logevent("You joined the room"))
-            roomObject.on("member.joined", e => logevent(e.member.name + " has joined the room"))
-            roomObject.on("member.left", e => logevent(e.member.id + " has left the room"))
+            roomSession.on("room.joined", e => logevent("You joined the room"))
+            roomSession.on("member.joined", e => logevent(e.member.name + " has joined the room"))
+            roomSession.on("member.left", e => logevent(e.member.id + " has left the room"))
+
+            await roomSession.join()
         } catch (error) {
             console.error('Something went wrong', error)
         }
@@ -60,8 +64,8 @@ async function joinwithusername() {
 }
 
 async function hangup() {
-    if (roomObject) {
-        await roomObject.hangup();
+    if (roomSession) {
+        await roomSession.leave();
         gotopage("getusername")
     }
 }

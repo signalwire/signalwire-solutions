@@ -17,14 +17,18 @@ To store your SignalWire API credentials, you need to create a file named `.env`
 ```
 PROJECT_ID=<Project ID here>
 API_TOKEN=<Your API token here>
-API_URL=https://<your space name>.signalwire.com/api/video
+API_URL=<your space name>.signalwire.com
 ```
 
 ## Running the application
 
-If you are running the application locally, simply create an `.env` file and set it up as above. Then start the application with `node index.js`.
+If you are running the application locally:
 
-It is simpler to run the application via Docker, It is simpler to run the application via Docker, by first building the image with `docker build -t videosdk .` followed by `docker run -it --rm -p 4000:4000 --name nodelenny --env-file .env videosdk`.
+ - install the dependencies with `npm install`
+ - create a `.env` file and set it up as above
+ - start the application with `node index.js`
+
+It is simpler to run the application via Docker, by first building the image with `docker build -t videosdk .` followed by `docker run -it --rm -p 4000:4000 --name nodelenny --env-file .env videosdk`.
 
 Either way, after starting the application, head to `http://localhost:4000` to see a test page.
 
