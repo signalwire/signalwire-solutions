@@ -10,21 +10,6 @@ const client = new Voice.Client({
   },
 })
 
-client.on('call.received', async (call) => {
-  console.log('Got call', call.from, call.to)
-
-  try {
-    await call.answer()
-    console.log('Inbound call answered')
-
-    console.log('headers', call.headers)
-
-    await call.playTTS({ text: "Hello! This is a test call."})
-  } catch (error) {
-    console.error('Error answering inbound call', error)
-  }
-})
-
 const taskClient = new Task.Client({
   project: process.env.SIGNALWIRE_PROJECT_ID,
   token: process.env.SIGNALWIRE_TOKEN,
@@ -36,9 +21,24 @@ taskClient.on('task.received', async (payload) => {
   try {
     const call = await client.dialPhone({
       from: '+13259995720',
-      to: '+14043287382',
+      to: '+12019712404',
       timeout: 30,
     })
+    const prompt = await call.promptTTS({
+      text: 'Hello! You have an appointment tomorrow at 10 AM. Would you like to confirm it?',
+      digits: {
+        max: 1,
+        digitTimeout: 2
+      },
+      speech: {
+        endSilenceTimeout: 1,
+        speechTimeout: 60,
+        language: 'en-US',
+        hints: ['yes', 'no']
+      }
+    })
+    const result = await prompt.waitForResult();
+    console.log(result)
   } catch (e) {
     console.log("Call not answered.")
   }
