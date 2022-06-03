@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <title>SignalWire v3 Relay Dialer</title>
+  </head>
+  <body>
+    <div>
+      <input type="text" id="msgText" placeholder="Message to relay" value="Hello! You have an appointment tomorrow at 10 AM. Would you like to confirm it?">
+      <input type="tel" id="dest" placeholder="Number to call" value="<%= destination %>">
+      <button type="button" onclick="sendReminder()">Send Reminder</button>
+    </div>
+    <script>
+      async function sendReminder() {
+        const data = {
+          message: document.getElementById('msgText').value,
+          number: document.getElementById('dest').value,
+        }
+        const response = await fetch('/send', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        return response.json();
+      }
+    </script>
+  </body>
+</html>
