@@ -24,6 +24,12 @@
 
         return response.json();
       }
+
+      const sse = new EventSource("/sse");
+
+      sse.addEventListener("message", ({data}) => {
+        console.log(data);
+      });
     </script>
   </body>
 </html>

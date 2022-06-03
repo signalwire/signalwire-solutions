@@ -9,8 +9,16 @@ const http = require('http').createServer(app);
 app.use(express.json());
 app.set('view engine', 'ejs');
 
+let {createSession, createChannel} = require("better-sse");
+const channel = createChannel();
+
 app.get("/", async (req, res, next) => {
   res.render('index', { destination: process.env.DEFAULT_DESTINATION })
+})
+
+app.post("/notify", async (req, res, next) => {
+  channel.broadcast(req.body.message);
+  res.json({ status: 'ok' });
 })
 
 app.post("/send", async (req, res, next) => {
@@ -26,6 +34,11 @@ app.post("/send", async (req, res, next) => {
   })
   
   res.json({ status: 'ok' });
+});
+
+app.get("/sse", async (req, res) => {
+	const session = await createSession(req, res);
+	channel.register(session);
 });
 
 http.listen(PORT, '0.0.0.0', () => {

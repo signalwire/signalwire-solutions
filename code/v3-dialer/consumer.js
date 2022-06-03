@@ -1,5 +1,6 @@
 require('dotenv').config()
 let { Voice, Task } = require('@signalwire/realtime-api')
+const axios = require('axios').default;
 
 const client = new Voice.Client({
   project: process.env.SIGNALWIRE_PROJECT_ID,
@@ -18,6 +19,7 @@ const taskClient = new Task.Client({
 
 taskClient.on('task.received', async (payload) => {
   console.log('Task Received', payload)
+  await reportStatus('STARTED')
   try {
     const call = await client.dialPhone({
       from: process.env.CALLER_ID,
@@ -34,14 +36,17 @@ taskClient.on('task.received', async (payload) => {
 
     if (result == 'invalid') {
       // still invalid, whatever
+      await reportStatus('FAILED')
       await call.playTTS({ text: "Sorry! I did not understand that again. Let me transfer you."})
       connectToAgent(call)
     } else if (result == 'yes')  {
       // do something with the confirmation
       console.log('playing message')
+      await reportStatus('CONFIRMED')
       await call.playTTS({ text: "Good! Your appointment is confirmed. Goodbye!"})
       await call.hangup();
     } else if (result == 'no')  {
+      await reportStatus('NOT_CONFIRMED')
       await call.playTTS({ text: "I understand you would like to change your appointment. Let me transfer you."})
       await connectToAgent(call);
     }
@@ -59,6 +64,15 @@ async function connectToAgent(call) {
   })
 
   await peer.waitForDisconnected();
+}
+
+async function reportStatus(text) {
+  axios.post(process.env.REPORTING_URL + '/notify', {
+    message: text
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
 }
 
 async function promptYesNo(call, text) {
