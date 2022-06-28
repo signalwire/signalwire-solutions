@@ -1,0 +1,76 @@
+<div id="videoRoot">
+<div>
+  <button id="connectSw" onclick="toggleCall();">Connect</button>
+  <button id="muteUnmute" onclick="toggleAudio();" data-audio="true" style="display: none;">Mute</button>
+</div>
+
+<script type="text/javascript" src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+<script src="https://unpkg.com/@signalwire/js"></script>
+<script type="text/javascript" src="/common.js"></script>
+
+<script>
+var _room = null;
+
+function toggleAudio() {
+  const muteBtn = document.getElementById('muteUnmute');
+  if (muteBtn.dataset.audio =="true") {
+    // we mute ourselves
+    muteBtn.dataset.audio = "false"
+    muteBtn.innerText = "Unmute";
+    _room.audioMute();
+  } else {
+    // we unmute
+    muteBtn.dataset.audio = "true"
+    muteBtn.innerText = "Mute";
+    _room.audioUnmute();
+  }
+}
+
+async function toggleCall() {
+  const callBtn = document.getElementById('connectSw');
+  const muteBtn = document.getElementById('muteUnmute');
+
+  if (_room) {
+    callBtn.innerText = "Connect";
+    muteBtn.innerText = "Mute";
+    muteBtn.dataset.audio = "true"
+    muteBtn.style.display = "none";
+    _room.leave();
+    _room = null;
+  } else {
+    const resp = await fetchToken();
+    joinRoom(resp.token, 'videoRoot');
+    callBtn.innerText = "Hangup";
+    muteBtn.style.display = "block";
+  }
+}
+
+async function fetchToken() {
+  const response = await fetch('/token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({})
+  });
+  return response.json();
+}
+
+function joinRoom(token, rootId) {
+  _room = new SignalWire.Video.RoomSession({
+    token: token,
+    rootElement: document.getElementById(rootId),
+    audio: true,
+    video: false
+  })
+
+  _room.on('room.joined', async (params) => {
+    await _room.hideVideoMuted();
+  })
+
+  _room.join();
+}
+window.ready(function () {
+
+});
+</script>
