@@ -6,10 +6,39 @@
 
 <script type="text/javascript" src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
 <script src="https://unpkg.com/@signalwire/js"></script>
-<script type="text/javascript" src="/common.js"></script>
+<script>const _reportingUrl = "<%= ENV['REPORTING_URL'] || 'http://localhost:4567/report' %>";</script>
 
 <script>
 var _room = null;
+var _memberList = null;
+
+async function logEvent(name, member, talking = null) {
+
+  payload = {name, member, talking};
+  const response = await fetch(_reportingUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+  return response.json();
+}
+
+window.ready = (callback) => {
+  if (document.readyState != 'loading') {
+    callback()
+  } else if (document.addEventListener) {
+    document.addEventListener('DOMContentLoaded', callback)
+  } else {
+    document.attachEvent('onreadystatechange', function () {
+      if (document.readyState != 'loading') {
+        callback()
+      }
+    })
+  }
+}
+
 
 function toggleAudio() {
   const muteBtn = document.getElementById('muteUnmute');
@@ -59,7 +88,7 @@ async function fetchToken() {
 function joinRoom(token, rootId) {
   _room = new SignalWire.Video.RoomSession({
     token: token,
-    rootElement: document.getElementById(rootId),
+    // rootElement: document.getElementById(rootId),
     audio: true,
     video: false
   })
@@ -67,6 +96,20 @@ function joinRoom(token, rootId) {
   _room.on('room.joined', async (params) => {
     await _room.hideVideoMuted();
   })
+
+  _room.on("member.joined", (e) => {
+    logEvent("member.joined", e.member.name)
+  });
+  _room.on("member.left", (e) => {
+    logEvent("member.left", e.member.name)
+  });
+  _room.on("member.talking", (e) => {
+    const member = _memberList.find(element => element.id == e.member.id)
+    logEvent("member.talking", member.name, e.member.talking);
+  });
+  _room.on("memberList.updated", (e) => {
+    _memberList = e.members;
+  });
 
   _room.join();
 }

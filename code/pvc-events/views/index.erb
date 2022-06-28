@@ -1,7 +1,21 @@
 <h1>Welcome</h1>
-<script type="text/javascript" src="/common.js"></script>
+
+<script>const _reportingUrl = "<%= ENV['REPORTING_URL'] || 'http://localhost:4567/report' %>";</script>
 <script>
 var _memberList = null;
+
+async function logEvent(name, member, talking = null) {
+
+  payload = {name, member, talking};
+  const response = await fetch(_reportingUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+  return response.json();
+}
 
 !function(e,r){e.swvr=e.swvr||function(r={}){
 Object.assign(e.swvr.p=e.swvr.p||{},r)}
@@ -27,7 +41,7 @@ SignalWire.Prebuilt.VideoRoom({
     });
     roomSession.on("member.talking", (e) => {
       const member = _memberList.find(element => element.id == e.member.id)
-      logEvent("member.talking", member.name);
+      logEvent("member.talking", member.name, e.member.talking);
     });
     roomSession.on("memberList.updated", (e) => {
       _memberList = e.members;

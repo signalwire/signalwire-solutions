@@ -1,9 +1,12 @@
 require 'dotenv/load'
 require 'sinatra'
 require 'faraday'
+require 'json'
 require "sinatra/reloader" if development?
 
 set :bind, '0.0.0.0'
+
+event_register = []
 
 def api_request(payload, endpoint, method = :post)
   conn = Faraday.new(url: "https://#{ENV['SIGNALWIRE_SPACE']}/api/video/#{endpoint}")
@@ -66,4 +69,15 @@ post '/token' do
 
   @token = request_token(@room, @user)
   {token: @token}.to_json
+end
+
+post '/report' do
+  data = JSON.parse(request.body.read)
+  event_register << data
+  {status: :ok}.to_json
+end
+
+get '/register' do
+  @register = event_register
+  erb :register
 end

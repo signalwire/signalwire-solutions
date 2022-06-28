@@ -1,0 +1,18 @@
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Event</th>
+      <th scope="col">Type</th>
+      <th scope="col">Speaking</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @register.each do |r| %>
+      <tr>
+        <td><%= r['name'] %></td>
+        <td><%= r['member'] %></td>
+        <td><%= r['talking'] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
