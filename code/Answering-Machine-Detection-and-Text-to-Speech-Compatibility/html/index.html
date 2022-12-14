@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Voice with SignalWire Compatibility API</title>
+    <link rel="stylesheet" media="all" href="index.css" />
+  </head>
+  <body>
+    <div class="body">
+      <form method="POST" action="/sendCall">
+        <h1>Send a TTS and AMD Call with SignalWire</h1>
+        <label>To Phone Number:</label>
+        <input
+          type="input"
+          placeholder="E.164 number like +18001234567"
+          name="phoneno"
+        />
+        <br />
+        <br />
+        Text To Be Read:
+        <textarea name="body"
+          placeholder="Make sure to type something long to give the AMD some time to work"></textarea>
+        <button>Send</button>
+      </form>
+    </div>
+  </body>
+</html>

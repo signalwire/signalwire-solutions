@@ -1,0 +1,35 @@
+# SignalWire Answering Machine Detection and Text to Speech-Compatibility API
+
+This example will place an outbound call with text to speech, and print out human/robot detection to the console via SignalWire amd. 
+
+
+## Prerequisites
+
+To run this example you will need to first create a SignalWire account and then configure a SignalWire Space with an inbound phone number and verified outbound phone number to forward to. 
+
+- [Create a SignalWire Space](https://developer.signalwire.com/apis/docs/signing-up-for-a-space)
+- [Buy a SignalWire Phone Number](https://developer.signalwire.com/apis/docs/buying-a-phone-number)
+
+## API Credentials
+
+To run the example a SignalWire Project ID and API Token are required.
+[Follow these intructions to create a new API Token.](https://developer.signalwire.com/guides/navigating-your-space#api)
+
+## Running the Application
+1. Fork or Download the application into your own environment
+2. Create a file `.env` with your credentials and the verified phone number. If using Replit, add these key/value pairs individually using the secrets menu. (the lock icon in the left hand menu)
+```
+PROJECT_ID=<Your SignalWire Project ID>
+API_TOKEN=<An API Token you've generated>
+SPACE_URL=<EXAMPLE.signalwire.com>
+PHONE_NUMBER=<Phone number you bought in E.164 format>
+APP_DOMAIN=https://Answering-Machine-Detection-and-Text-to-Speech-Compatibility.signalwire.repl.co
+```
+3. Install the node modules.
+```bash
+npm install
+``` 
+4. Run the example.
+```bash
+npm start
+```
