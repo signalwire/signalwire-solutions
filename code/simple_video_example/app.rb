@@ -8,10 +8,13 @@ set :bind, '0.0.0.0'
 
 # Utility method to perform HTTP requests against the SW Video API
 def api_request(payload, endpoint)
-  conn = Faraday.new(url: "https://#{ENV['SIGNALWIRE_SPACE']}/api/video/#{endpoint}")
-  conn.basic_auth(ENV['SIGNALWIRE_PROJECT_KEY'], ENV['SIGNALWIRE_TOKEN'])
+  conn = Faraday.new(
+    url: "https://#{ENV['SIGNALWIRE_SPACE']}",
+    headers: {'Content-Type' => 'application/json'}
+  )
+  conn.request :authorization, :basic, ENV['SIGNALWIRE_PROJECT_KEY'], ENV['SIGNALWIRE_TOKEN']
 
-  response = conn.post() do |req|
+  response = conn.post("/api/video/#{endpoint}") do |req|
     req.headers['Content-Type'] = 'application/json'
     req.body = payload.to_json
   end
@@ -24,11 +27,12 @@ def request_token(room, user = nil)
   payload = {
     room_name: room,
     user_name: user.nil? ? "user#{rand(1000)}" : user,
-    scopes: [
+    permissions: [
       "room.self.audio_mute",
       "room.self.audio_unmute",
       "room.self.video_mute",
-      "room.self.video_unmute"
+      "room.self.video_unmute",
+      "room.playback"
     ]
   }
   result = api_request(payload, 'room_tokens')

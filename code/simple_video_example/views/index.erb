@@ -1,4 +1,4 @@
-<script src="https://cdn.signalwire.com/libs/js/signalwire/signalwire-alpha-preview-3.js"></script>
+<script src="https://unpkg.com/@signalwire/js"></script>
 <script type="text/javascript" src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
 
 <div class="container">
@@ -15,33 +15,18 @@
   </div>
   <div class="row">
     <div class="col">
-      <div class="btn-group w-100" role="group">
-        <button id="muteSelfBtn" class="btn btn-warning px-3 mt-2 d-none" onClick="muteSelf()" disabled="true">Mute Self</button>
-        <button id="unmuteSelfBtn" class="btn btn-warning px-3 mt-2 d-none" onClick="unmuteSelf()" disabled="true">UnMute Self</button>
-      </div>
+      <input type="text" id="url" class="form-control" value="https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4">
+      <button class="btn btn-success" onclick="play()">Play</button>
     </div>
     <div class="col">
-      <div class="btn-group w-100" role="group">
-        <button id="muteVideoSelfBtn" class="btn btn-warning px-3 mt-2 d-none" onClick="muteVideoSelf()" disabled="true">Video Mute Self</button>
-        <button id="unmuteVideoSelfBtn" class="btn btn-warning px-3 mt-2 d-none" onClick="unmuteVideoSelf()" disabled="true">Video UnMute Self</button>
-      </div>
+      <button class="btn btn-danger" onclick="hangup()">Hangup</button>
     </div>
   </div>
 </div>
 
 <script type="text/javascript">
-    var client;
-    var rtcSession = null;
-
-    var host = '<%= ENV.fetch('HOST', '') %>';
+    var roomSession = null;
     var token = "<%= @token %>";
-
-    const muteButtons = [
-      muteSelfBtn,
-      unmuteSelfBtn,
-      muteVideoSelfBtn,
-      unmuteVideoSelfBtn
-    ]
 
     ready(function() {
       connect();
@@ -51,72 +36,36 @@
      * Connect with Relay creating a client and attaching all the event handler.
     */
     function connect() {
-      SignalWire.Video.createRTCSession({
-        host: host, // allow switch between staging and production
-        token: token,
-        rootElementId: 'rootElement',
-        audio: '1',
-        video: '1',
-      }).then(rtc => {
-        // Make it global
-        rtcSession = rtc
+      roomSession = new SignalWire.Video.RoomSession({
+        token,
+        rootElement: document.getElementById("rootElement"),
+      });
 
-        console.debug('Video SDK room', rtcSession)
-
-        rtcSession.on('destroy', (params) => {
-          hangup()
-        })
-
-      rtcSession.on('room.started', (params) =>
+      roomSession.on('room.joined', (params) =>
         console.debug('>> DEMO room.started', params)
       )
-      rtcSession.on('room.subscribed', (params) => {
-        console.debug('>> DEMO room.subscribed', params)
-
-        muteButtons.forEach(button => {
-          button.classList.remove('d-none');
-          button.disabled = false;
-        })
-      })
-      rtcSession.on('room.updated', (params) =>
-        console.debug('>> DEMO room.updated', params)
-      )
-      rtcSession.on('room.ended', (params) => {
-        console.debug('>> DEMO room.ended', params)
-        hangup()
-      })
-      rtcSession.on('member.joined', (params) =>
+      roomSession.on('member.joined', (params) =>
         console.debug('>> DEMO member.joined', params)
       )
-      rtcSession.on('member.updated', (params) =>
-        console.debug('>> DEMO member.updated', params)
-      )
-      rtcSession.on('member.left', (params) =>
-        console.debug('>> DEMO member.left', params)
-      )
-      rtcSession.on('layout.changed', (params) =>
-        console.debug('>> DEMO layout.changed', params)
-      )
-      rtcSession.on('track', (event) =>
-        console.debug('>> DEMO track', event)
-      )
 
-      rtcSession.join()
-    })
-  }
+      roomSession.join()
+    }
 
   /**
     * Hangup the rtcSession if present
   */
   function hangup() {
-    if (rtcSession) {
-      rtcSession.hangup()
+    if (roomSession) {
+      roomSession.leave()
     }
+  }
 
-    muteButtons.forEach(button => {
-      button.classList.add('d-none');
-      button.disabled = true;
-    })
+  function play() {
+    if (roomSession) {
+      var url = document.getElementById("url").value
+      console.log('url', url)
+      roomSession.play({ url })
+    }
   }
 
   // jQuery document.ready equivalent
@@ -132,37 +81,5 @@
         }
       });
     }
-  }
-
-  function muteAll() {
-    rtcSession.audioMute('all')
-  }
-
-  function unmuteAll() {
-    rtcSession.audioUnmute('all')
-  }
-
-  function muteSelf() {
-    rtcSession.audioMute(rtcSession.memberId)
-  }
-
-  function unmuteSelf() {
-    rtcSession.audioUnmute(rtcSession.memberId)
-  }
-
-  function muteVideoAll() {
-    rtcSession.videoMute('all')
-  }
-
-  function unmuteVideoAll() {
-    rtcSession.videoUnmute('all')
-  }
-
-  function muteVideoSelf() {
-    rtcSession.videoMute(rtcSession.memberId)
-  }
-
-  function unmuteVideoSelf() {
-    rtcSession.videoUnmute(rtcSession.memberId)
   }
 </script>
