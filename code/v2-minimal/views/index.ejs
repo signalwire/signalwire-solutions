@@ -75,12 +75,18 @@
           break;
         case 'trying': // You are trying to call someone and he's ringing now
           console.log('Ringing...');
+          
           break;
         case 'recovering': // Call is recovering from a previous session, we do not use that here
           console.log('recovering');
           break;
         case 'ringing': // Someone is calling you
           console.log('Inbound ringing...');
+          if (confirm('Pick up the call?')) {
+            currentCall.answer();
+          } else {
+            currentCall.hangup();
+          }
           break;
         case 'active': // Call has become active
           console.log('Call is active');

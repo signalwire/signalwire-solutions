@@ -21,7 +21,7 @@ async function apiRequest(endpoint, payload = {}, method = 'POST') {
 app.get('/', async (req, res) => {
   var defaultDestination = process.env.DEFAULT_DESTINATION
   var projectId = process.env.SIGNALWIRE_PROJECT_KEY
-  var token = await apiRequest('/api/relay/rest/jwt', { expires_in: 120, resource: 'myclient' }) 
+  var token = await apiRequest('/api/relay/rest/jwt', { expires_in: 120, resource: 'lucasclient' }) 
   res.render('index', { defaultDestination, projectId, token: token.jwt_token });
 })
 
