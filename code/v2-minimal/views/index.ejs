@@ -52,6 +52,47 @@
         console.log('You are connected to SignalWire!');
       })
 
+      client.on('signalwire.notification', handleNotification);
+
+      function handleNotification(notification) {
+        console.log('notification', notification)
+        switch (notification.type) {
+          case 'callUpdate':
+            handleCallUpdate(notification.call);
+            break;
+          case 'userMediaError':
+            // Permission denied or invalid audio/video params on `getUserMedia`
+            console.error("SignalWire userMediaError:", notification);
+            break;
+        }
+      }
+
+      function handleCallUpdate(call) {
+      currentCall = call;
+
+      switch (call.state) {
+        case 'new': // Setup the UI
+          break;
+        case 'trying': // You are trying to call someone and he's ringing now
+          console.log('Ringing...');
+          break;
+        case 'recovering': // Call is recovering from a previous session, we do not use that here
+          console.log('recovering');
+          break;
+        case 'ringing': // Someone is calling you
+          console.log('Inbound ringing...');
+          break;
+        case 'active': // Call has become active
+          console.log('Call is active');
+          break;
+        case 'hangup': // Call is over
+          console.log('hangup');
+          break;
+        case 'destroy': // Call has been destroyed
+          break;
+      }
+    }
+
       client.autoRecoverCalls = false;
 
       client.connect();
