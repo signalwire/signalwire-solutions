@@ -11,7 +11,7 @@ itsdangerous==1.1.0
 Jinja2==2.11.3
 MarkupSafe==1.1.1
 multidict==5.1.0
-PyJWT==2.0.1
+PyJWT==2.4.0
 PySocks==1.7.1
 pytz==2020.5
 requests==2.25.1
