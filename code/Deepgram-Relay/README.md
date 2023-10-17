@@ -20,7 +20,8 @@ This application demonstrates the use of a relay consumer to answer a call and t
 ### 1. Clone the repository:
 
    ```
-   git clone <repository-url>
+   gh repo clone signalwire/signalwire-solutions
+   cd code
    cd deepgram-relay-poc
    ```
    
