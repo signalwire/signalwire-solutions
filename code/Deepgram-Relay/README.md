@@ -1,6 +1,7 @@
 # Deepgram Relay POC
+<img width="438" alt="Screenshot 2023-10-17 at 7 17 21 AM" src="https://github.com/signalwire/signalwire-solutions/assets/78746011/b29719ba-397e-455e-9a80-789586f75f55">
 
-![](../../Desktop/Screenshot 2023-10-17 at 7.17.21 AM.png)
+
 ## Getting Started
 
 Follow these steps to set up and run the application.
@@ -48,7 +49,7 @@ Start the SignalWire client to answer inbound calls and stream audio via 'tap':
 
 ###5. Set up your SignalWire number
 Use the 'asr' Topic declared with the Relay client. You can add this route in your SignalWire dashboard.
-![](../../Desktop/Screenshot 2023-10-17 at 6.35.13 AM.png)
+<img width="1265" alt="Screenshot 2023-10-17 at 6 35 13 AM" src="https://github.com/signalwire/signalwire-solutions/assets/78746011/c453a0fc-7941-4fd3-aaf8-5ee3b64095c5">
 
 Overview
 This application sets up a relay consumer to answer inbound calls and transcribe the audio using Deepgram. When a call is received, it answers the call, establishes a WebSocket connection, streams audio for transcription, and prints it to the console.
