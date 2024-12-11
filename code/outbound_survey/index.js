@@ -1,5 +1,5 @@
 const express = require("express");
-const { RestClient } = require('@signalwire/node')
+const { RestClient } = require('@signalwire/compatibility-api')
 require('dotenv').config()
 
 const i18n = {
